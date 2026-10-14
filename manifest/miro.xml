@@ -6,7 +6,7 @@
 
       mkdir -p .repo/local_manifests
       cp manifest/miro.xml .repo/local_manifests/miro.xml
-      repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+      repo sync -c -j8    # full flag set in docs/build-cnb.md §1
 
   The miro trees are hosted under github.com/sulthonuladib
   (android_device_xiaomi_miro, android_device_xiaomi_miro-kernel,
