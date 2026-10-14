@@ -26,9 +26,12 @@ Bring-up kit for **Evolution X (Android 17 / `cnb`)** on the **POCO F7 Ultra**
 ## Quick facts
 
 - Device: POCO F7 Ultra = Redmi K80 Pro = `miro` (do not confuse with `zorn` = Redmi K80/SM8650).
-- Kernel: Linux **6.6.30 GKI** (`android15-6.6`), Xiaomi OSS branch **`bsp-miro-v-oss`**,
-  Qualcomm baseline `qcom-LA.VENDOR.14.3.0.r1-14500-r1.0.r1_00042.0`.
-- Stock kernel string: `6.6.30-android15-8-gc6f5283046c6-ab12364222-4k`.
+- Kernel: Linux **6.6.30 GKI** OSS branch (`bsp-miro-v-oss`), Qualcomm baseline
+  `qcom-LA.VENDOR.14.3.0.r1-14500-r1.0.r1_00042.0`; the shipped OS3.0.302.0 stock ROM runs
+  **6.6.118** (`android15-6.6`).
+- Stock kernel string: `6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`.
+- Stock baseline: Android 16 / HyperOS 3 `OS3.0.302.0.WOMIDXM` (SPL 2026-08-01); super is
+  11 GiB (`11811160064`), so the `sm8750-common` default applies.
 - Target: Evolution X branch **`cnb`** = Android 17 (EVO 12.3). SM8750 is already supported
   on A17 by LineageOS 24 and by the `Crisp-los` `cnb` SM8750 common tree, which already
   contains a `miro` code path.
@@ -45,5 +48,7 @@ trees, then `lunch` + `m evolution`. Details in [`docs/build-cnb.md`](docs/build
 
 ## Status
 
-Research + scaffolding. Not yet flashed on a device. Needs the stock ROM to populate the
-kernel artifacts and vendor blobs.
+Phase 2 complete: the stock recovery ROM is dumped (`/mnt/games/miro-work/images`), the
+kernel artifacts in `device/xiaomi/miro-kernel/` are populated from OS3.0.302.0.WOMIDXM,
+and the SPL/super values are recorded. Next: Phase 3 (generate the vendor trees). Not yet
+flashed on a device.

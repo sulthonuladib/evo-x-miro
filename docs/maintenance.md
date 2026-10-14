@@ -85,17 +85,20 @@ Depending on what changed, you regenerate one or more of:
 
 Then **always**:
 
-1. Bump the security patch / AVB rollback index in
+1. Bump the security patch / AVB rollback index. The canonical place is
    `device/xiaomi/sm8750-common/BoardConfigCommon.mk`:
 
    ```make
-   XIAOMI_SM8750_SECURITY_PATCH := <new SPL, e.g. 2026-05-01>
-   XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP := <unix ts>
+   XIAOMI_SM8750_SECURITY_PATCH := <new SPL, e.g. 2026-08-01>
+   XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP := <unix ts, e.g. 1785542400>
    ```
 
-   This must be **≥** the SPL the new firmware reports in the bootloader, or the
-   bootloader rejects the freshly flashed inactive slot. This is the single most
-   common cause of "OTA installs then won't boot".
+   Until the common tree catches up, `device/xiaomi/miro/BoardConfig.mk` re-states
+   `XIAOMI_SM8750_SECURITY_PATCH`, `…_TIMESTAMP`, `BOOT_SECURITY_PATCH`,
+   `VENDOR_SECURITY_PATCH` and the three `BOARD_AVB_*_ROLLBACK_INDEX` variables **after**
+   the `include` of the common tree. Update that block in the same commit, or the
+   bootloader rejects the freshly flashed inactive slot. Current baseline
+   (OS3.0.302.0.WOMIDXM): SPL `2026-08-01`, timestamp `1785542400`.
 
 2. Rebuild, test, and only then publish.
 

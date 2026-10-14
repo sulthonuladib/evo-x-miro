@@ -9,21 +9,38 @@ KERNEL_PATH := $(DEVICE_PATH)-kernel
 
 # Stock kernel version string. This is the `uname -r`-style localversion used by
 # the stock vendor_dlkm/system_dlkm module directories. Re-derive it from the
-# stock ROM if you update the kernel baseline.
-# TODO(miro): the scaffold used the OS2.0.107.0 value; OS3.0.302.0.WOMIDXM may differ.
-MIRO_KERNEL_VERSION := 6.6.30-android15-8-gc6f5283046c6-ab12364222-4k
+# stock ROM if you update the kernel baseline (tools/unpack-kernel-artifacts.sh
+# prints it). OS3.0.302.0.WOMIDXM ships 6.6.118, not the OS2.0.107.0 dump's 6.6.30.
+MIRO_KERNEL_VERSION := 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k
 
 # Inherit from sm8750-common (A17 / cnb)
 include device/xiaomi/sm8750-common/BoardConfigCommon.mk
 
+# Security patch / AVB rollback indexes.
+#
+# The common tree still carries the OS2.0.107.0 value (2026-02-01). The current
+# stock baseline (OS3.0.302.0.WOMIDXM) reports post-security-patch-level
+# 2026-08-01, so re-state the value and every index the common tree derived from
+# it *after* the include (Make variables are assigned eagerly). Timestamp is
+# 2026-08-01 00:00:00 UTC. Drop this block once sm8750-common is bumped past
+# 2026-08-01. See docs/maintenance.md §B.
+XIAOMI_SM8750_SECURITY_PATCH := 2026-08-01
+XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP := 1785542400
+
+BOOT_SECURITY_PATCH := $(XIAOMI_SM8750_SECURITY_PATCH)
+VENDOR_SECURITY_PATCH := $(XIAOMI_SM8750_SECURITY_PATCH)
+
+BOARD_AVB_BOOT_ROLLBACK_INDEX := $(XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := $(XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(XIAOMI_SM8750_SECURITY_PATCH_TIMESTAMP)
+
 # Partitions
 #
-# IMPORTANT: the common tree hardcodes the Xiaomi 15 Pro super size (11811160064).
-# miro's physical super partition is SMALLER; flashing a super built at the wrong
-# size fails. Verify the real values with `lpdump` in recovery before flashing.
-# (The OS3.0.302.0 fastboot ROM's super/GPT is the authoritative source.)
-BOARD_SUPER_PARTITION_SIZE := 9126805504
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
+# The common tree's 11 GiB super default is correct for the OS3.0.302.0 baseline:
+# its fastboot GPT sizes super at 11534336 KiB = 11811160064, dynamic
+# 11809841488. The old OS2.0.107.0 (Android 15) dump's 9126805504 / 9122611200
+# do NOT apply after flashing the OS3.0.302.0 fastboot ROM. Confirm with `lpdump`
+# on the device before flashing.
 
 # Sepolicy
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor

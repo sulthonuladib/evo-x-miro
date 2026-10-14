@@ -35,11 +35,14 @@ a full Evolution X checkout consumes.
 
 - **Never hand-write vendor blobs.** They are generated with `extract_utils`; commit the
   file list and fixups, not the binaries.
-- **Do not copy the haotian super size.** `miro`'s physical super is
-  `9126805504` / dynamic `9122611200`; the common tree defaults to the Xiaomi 15 Pro's
-  11 GiB. Verify with `lpdump` before flashing.
-- **Rollback index moves with firmware.** Any stock-firmware bump must also bump
-  `XIAOMI_SM8750_SECURITY_PATCH` in `device/xiaomi/sm8750-common/BoardConfigCommon.mk`.
+- **Super is 11 GiB on this baseline.** The OS3.0.302.0 fastboot GPT sizes `super` at
+  `11811160064` / dynamic `11809841488` (the common tree default is correct). The old
+  OS2.0.107.0 (Android 15) dump's `9126805504` no longer applies after flashing the
+  OS3.0.302.0 fastboot ROM. Verify with `lpdump` on the device.
+- **Rollback index moves with firmware.** OS3.0.302.0.WOMIDXM reports SPL **2026-08-01**
+  (`1785542400`). `device/xiaomi/miro/BoardConfig.mk` re-states the AVB rollback indexes
+  because the common tree still carries `2026-02-01`; bump both together (and bump the
+  common tree once forked) on any stock-firmware update.
 - **Enforcing SELinux.** The `cnb` tree is enforcing; keep it that way.
 - **This machine cannot build A17** (46 GB disk / 31 GB RAM vs ~250 GB / 64 GB). It can run
   the extraction tooling. Builds happen on a host/CI.

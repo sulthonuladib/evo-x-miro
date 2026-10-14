@@ -9,13 +9,22 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 1 (environment) + Phase 2 (stock ROM), both blocked.
-- **Done:** Phase 0 — research, decisions, and the bring-up kit.
-- **Next action:** run Phase 2 — `tools/extract-stock-rom.sh /mnt/games/miro-files/miro_id_global-ota_full-OS3.0.302.0.WOMIDXM-user-16.0-e2b69f85e9.zip /mnt/games/miro-work/images`,
-  then `tools/unpack-kernel-artifacts.sh` into `device/xiaomi/miro-kernel`.
-- **⚠️ Critical:** this firmware is dated 2026-07-30 / Android 16, so its security patch level is
-  likely newer than the `XIAOMI_SM8750_SECURITY_PATCH := 2026-02-01` in the common tree. Read the
-  real SPL and **bump the rollback index in the same commit** (see `docs/maintenance.md`).
+- **Active phase:** Phase 3 (vendor trees). Phase 2 is complete; Phase 1 still needs a build host.
+- **Done:** Phase 0 (research + kit) and Phase 2 (stock ROM extraction + kernel artifacts).
+- **Next action:** Phase 3 — generate `vendor/xiaomi/miro` and `vendor/xiaomi/sm8750-common`
+  from `/mnt/games/miro-work/images` with `extract-files.py` + `setup-makefiles.py`, seeded
+  from the public `poco_miro_dump` list (see `vendor/xiaomi/miro/README.md`).
+- **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
+  - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
+    6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
+    `device/xiaomi/miro-kernel/` (kernel, 8 DTBs, dtbo.img, 411 ramdisk modules, 380
+    vendor_dlkm modules, 96 system_dlkm modules).
+  - SPL **2026-08-01** (`1785542400`); `device/xiaomi/miro/BoardConfig.mk` overrides the
+    common tree's stale `2026-02-01` AVB rollback indexes after the include.
+  - Super: **11 GiB** (`11811160064` / dynamic `11809841488`) per the OS3.0.302.0 fastboot
+    GPT — the common-tree default is correct; the old 8.5 GiB dump values are stale.
+  - TZ `TZ.XF.5.29-00450-PAKALA-1.111359.5`; build
+    `16OS3.1.260730.110026679.QCPEGL.S` (2026-07-30).
 - **Inputs:**
   - ✅ **Stock ROM** — at `/mnt/games/miro-files/`:
     - recovery: `miro_id_global-ota_full-OS3.0.302.0.WOMIDXM-user-16.0-e2b69f85e9.zip` (`payload.bin`, 7.5 GB)
@@ -73,20 +82,21 @@ trees, and the next action. ✅
 **Acceptance:** `repo sync` completes; `device/xiaomi/sm8750-common` and
 `hardware/xiaomi` are present; keys exist.
 
-## Phase 2 — Stock ROM acquisition & extraction 🟡
+## Phase 2 — Stock ROM acquisition & extraction ✅
 
 **Inputs:** present — `/mnt/games/miro-files/` (`OS3.0.302.0.WOMIDXM`, Android 16 / HyperOS 3).
 
-| Task | Command |
-| --- | --- |
-| Dump partitions | `tools/extract-stock-rom.sh <recovery.zip> work/images` |
-| Populate kernel tree | `tools/unpack-kernel-artifacts.sh work/images device/xiaomi/miro-kernel` |
-| Record kernel version | set `MIRO_KERNEL_VERSION` to the `system_dlkm/…` dir name |
-| Verify super layout | `lpdump` (recovery/dump); confirm `9126805504` / `9122611200` |
-| Firmware baseline | note SPL/TZ version from `board-info.txt` |
+| Task | Command | Result |
+| --- | --- | --- |
+| Dump partitions | `tools/extract-stock-rom.sh <recovery.zip> work/images` | ✅ 18 GB in `/mnt/games/miro-work/images` (49 partitions incl. `mi_ext`) |
+| Populate kernel tree | `tools/unpack-kernel-artifacts.sh work/images device/xiaomi/miro-kernel` | ✅ kernel + 8 DTBs + dtbo + 411/380/96 modules |
+| Record kernel version | set `MIRO_KERNEL_VERSION` to the `system_dlkm/…` dir name | ✅ `6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k` |
+| Verify super layout | `lpdump` (recovery/dump); confirm `9126805504` / `9122611200` | ✅ actually **11 GiB**: fastboot GPT `rawprogram0.xml` says `super` = 11534336 KiB = `11811160064`; dynamic `11809841488` (common default) |
+| Firmware baseline | note SPL/TZ version from `board-info.txt` | ✅ SPL `2026-08-01` (OTA metadata); TZ `TZ.XF.5.29-00450-PAKALA-1.111359.5` (`tz.img`); `board-info.txt` is not in the vendor/odm images |
 
 **Acceptance:** `device/xiaomi/miro-kernel/` holds `kernel`, `dtb/`, `dtbo.img`,
-`vendor_ramdisk/`, `vendor_dlkm/`, `system_dlkm/<version>/` with `modules.load` files.
+`vendor_ramdisk/`, `vendor_dlkm/`, `system_dlkm/<version>/` with `modules.load` files. ✅
+(every `modules.load` entry resolves; module sets are byte-identical to the stock images)
 
 ## Phase 3 — Vendor trees ⬜
 
@@ -184,9 +194,12 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
 ## Open questions
 
 - Exact `lunch` release token for `cnb` (read from the `lunch` menu).
-- Does `miro`'s super include the `mi_ext` logical partition in the custom build?
 - Which Xiaomi blobs can legally ship (Dolby, Leica-flagged audio)?
-- Is the public `proprietary-files.txt` list complete vs. a fresh dump?
+- Is the public `proprietary-files.txt` list complete vs. a fresh dump? (The OS2.0.107.0
+  list predates OS3.0.302.0; diff it against the fresh images in Phase 3.)
+- Resolved: stock `super` **does** contain the `mi_ext` logical partition, but the custom
+  build's common-tree partition list omits it — it is not needed.
+- Resolved: `miro` super is 11 GiB on the OS3.0.302.0 baseline (not 8.5 GiB).
 
 ## Change log
 
@@ -196,3 +209,8 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
 - 2026-10-14 — stock ROM located at `/mnt/games/miro-files/`; baseline is **Android 16 /
   HyperOS 3** (`OS3.0.302.0.WOMIDXM`), newer than the OS2.0.107.0 dump. Kernel version and
   rollback index must be re-derived from this ROM.
+- 2026-10-14 — **Phase 2 complete.** Dumped the recovery payload (49 partitions); populated
+  `device/xiaomi/miro-kernel/` (kernel `6.6.118-…`, 8 DTBs, dtbo.img, 411+380+96 modules);
+  `unpack-kernel-artifacts.sh` rewritten for EROFS/LZ4-cpio/FDT splitting; SPL corrected to
+  `2026-08-01` and overridden in the miro BoardConfig; super corrected to 11 GiB; docs and
+  AGENTS.md updated; hyperdroid skills installed under `.agents/skills/`.

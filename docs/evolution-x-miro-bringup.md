@@ -12,7 +12,7 @@ OTA strategy for the POCO F7 Ultra. Every non-obvious claim links to the source 
 | Question | Answer |
 | --- | --- |
 | What device is this? | POCO F7 Ultra = **Redmi K80 Pro**, codename **`miro`**, platform **`sun`**, SoC **Snapdragon 8 Elite (SM8750)** |
-| Kernel source | `MiCode/Xiaomi_Kernel_OpenSource`, branch **`bsp-miro-v-oss`**, Linux **6.6.30** GKI, Qualcomm baseline `qcom-LA.VENDOR.14.3.0.r1-14500-r1.0.r1_00042.0` |
+| Kernel source | `MiCode/Xiaomi_Kernel_OpenSource`, branch **`bsp-miro-v-oss`**, Linux **6.6.30** GKI (OSS branch; the shipped ROM kernel is 6.6.118), Qualcomm baseline `qcom-LA.VENDOR.14.3.0.r1-14500-r1.0.r1_00042.0` |
 | Kernel shape | Android 15/16 GKI (`android15-6.6`), Kleaf/Bazel, target `miro`, variants `consolidate` / `perf` |
 | ROM base | Evolution X. Branch **`bka`** = Android 16 (matches the existing LineageOS 23.2 work); branch **`cnb`** = Android 17 (current dev). **Android 17 is feasible** — SM8750 is already supported on A17 by LineageOS 24 and by an Evolution X SM8750 `cnb` tree (see §3.7). |
 | Best starting point | **Do not start from scratch.** Fork the Xiaomi SM8750 `lineage-23.2` bring-up (`sm8750-common` + a device tree + prebuilt kernel). `miro` is explicitly listed as a target for that common tree. |
@@ -71,8 +71,10 @@ Source: <https://www.mi.com/global/product/poco-f7-ultra/specs/>
 - Qualcomm baseline: `qcom-LA.VENDOR.14.3.0.r1-14500-r1.0.r1_00042.0` (Lahaina/Vendor 14.3, i.e. the
   Qualcomm Android 15/16 BSP for `sun`).
 
-This is a **GKI** kernel. The stock device runs the merged string
-**`6.6.30-android15-8-gc6f5283046c6-ab12364222-4k`** (read out of the dump; see §5), and the
+This is a **GKI** kernel. The OSS branch is based on 6.6.30, but the current stock ROM
+(OS3.0.302.0.WOMIDXM) ships the merged string
+**`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (read out of `boot.img`; see §5). The
+older OS2.0.107.0 dump shipped `6.6.30-android15-8-gc6f5283046c6-ab12364222-4k`. The
 Evolution X manifest ships a matching `kernel-6.6` platform snippet pinned to
 `android15-6.6-2026-07`:
 <https://raw.githubusercontent.com/Evolution-X/manifest/cnb/snippets/kernel-6.6.xml>.
@@ -161,7 +163,7 @@ device/xiaomi/miro-kernel/
 ├── prebuilt_kernel_headers.tar.gz
 ├── vendor_ramdisk/*.ko        # modules loaded in recovery/vendor ramdisk
 ├── vendor_dlkm/*.ko
-└── system_dlkm/6.6.30-android15-8-gc6f5283046c6-ab12364222-4k/…
+└── system_dlkm/6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k/…
 ```
 
 This is exactly how the haotian tree installs it (`BoardConfig.mk`):
@@ -282,17 +284,19 @@ Public SM8750 device trees you can base `miro` on:
 ### 3.4 `miro`-specific BoardConfig facts (from a real dump)
 
 The dump at <https://github.com/Jiovanni-dump/poco_miro_dump> is generated from
-`miro:15/OS2.0.107.0.VOMMIXM:user`. Its `aosp-device-tree/BoardConfig.mk` gives the values that
-**must not be copied blindly from haotian**, because the SM8750 common tree targets a different
-super size:
+`miro:15/OS2.0.107.0.VOMMIXM:user` (Android 15). Its `aosp-device-tree/BoardConfig.mk` is a
+stale baseline for the current Android 16 firmware: the OS2.0.107.0 fastboot GPT sized
+`super` at 8.5 GiB, while **OS3.0.302.0.WOMIDXM's fastboot GPT sizes it at 11 GiB**
+(`rawprogram0.xml`: `label="super" size_in_KB="11534336.0"`, start_sector 241664,
+2883584 sectors of 4096 B). Verified 2026-10-14:
 
-| Setting | `miro` (real) | Xiaomi 15 Pro `sm8750-common` |
+| Setting | OS3.0.302.0 (Android 16, use this) | OS2.0.107.0 dump (Android 15, stale) |
 | --- | --- | --- |
-| `BOARD_SUPER_PARTITION_SIZE` | `9126805504` (8.5 GiB) | `11811160064` (11 GiB) |
-| dynamic group name | `xiaomi_dynamic_partitions` | `qti_dynamic_partitions` |
-| dynamic size | `9122611200` | `11809841488` |
-| dynamic list | `vendor_dlkm system product system_ext system_dlkm vendor odm` | `… odm` (no `mi_ext`) |
-| `BOARD_*IMAGE_PARTITION_SIZE` | boot `100663296`, dtbo `18874368`, recovery `104857600`, init_boot `8388608`, vendor_boot `100663296` | dtbo `25165824` |
+| `BOARD_SUPER_PARTITION_SIZE` | `11811160064` (11 GiB) | `9126805504` (8.5 GiB) |
+| `BOARD_QTI_DYNAMIC_PARTITIONS_SIZE` | `11809841488` (common-tree default) | `9122611200` |
+| dynamic group name | `qti_dynamic_partitions` | `xiaomi_dynamic_partitions` |
+| dynamic list | common tree's list (no `mi_ext`) | `vendor_dlkm system product system_ext system_dlkm vendor odm` |
+| `BOARD_*IMAGE_PARTITION_SIZE` | same as common tree (boot `100663296`, dtbo `18874368`, recovery `104857600`, init_boot `8388608`, vendor_boot `100663296`) | same |
 
 `miro` also carries the Xiaomi logical `mi_ext` partition (mounted via overlayfs per the stock
 `fstab.qcom`), and a real `/dev/block/by-name/recovery` node. The OrangeFox tree for `miro`
@@ -438,12 +442,22 @@ contain `vendor/`, `odm/`, `system_ext/`, `product/`, `system_dlkm/`, `vendor_dl
 `aosp-device-tree/` with `proprietary-files.txt` (4,768 lines) plus `extract-files.sh` and
 `setup-makefiles.sh`.
 
-Observed identity for the dump:
+Observed identity for the old dump:
 
 - build: `qti/missi/missi:15/AQ3A.240829.003/OS2.0.107.0.VOMMIXM:user/release-keys`
 - kernel: `6.6.30-android15-8-gc6f5283046c6-ab12364222-4k` (`CONFIG_LOCALVERSION="-4k"`)
 - `board-info.txt`: `version-trustzone=TZ.XF.5.29-00074.1-PAKALA-1.84491.8`,
   `version-vendor=1743514669`
+
+Identity of the current baseline (`/mnt/games/miro-files/`, OS3.0.302.0.WOMIDXM):
+
+- build: `POCO/miro_global/miro:16/BP2A.250605.031.A3/16OS3.1.260730.110026679.QCPEGL.S:user/release-keys`
+- OTA SPL: `2026-08-01`; build timestamp `1785385611` (2026-07-30 UTC)
+- kernel: `6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`
+- TZ (`tz.img`): `TZ.XF.5.29-00450-PAKALA-1.111359.5`
+- dynamic partitions dumped from `payload.bin`: `system`, `system_ext`, `product`, `vendor`,
+  `odm`, `vendor_dlkm`, `system_dlkm`, **`mi_ext`** (the custom build does not need `mi_ext`;
+  the common tree's partition list omits it)
 
 Workflow to produce `vendor/xiaomi/miro`:
 
@@ -499,7 +513,8 @@ device tree, and an `evolution.dependencies` file. Blind builds are explicitly r
 
 ### 6.4 The rollback-index / security-patch trap
 
-The haotian `BoardConfigCommon.mk` documents the key gotcha:
+The haotian `BoardConfigCommon.mk` documents the key gotcha (values shown are the stale
+OS2.0.107.0 baseline):
 
 ```
 XIAOMI_SM8750_SECURITY_PATCH := 2026-02-01
@@ -512,9 +527,12 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(…_TIMESTAMP) # location 2
 > Keep AVB rollback indexes at or above the stock firmware's SPL, or the bootloader can reject a
 > freshly flashed inactive slot before Android starts.
 
-For `miro` you must read the **currently installed stock firmware's** SPL and set the rollback
-indexes at or above it. The old dump reports `VENDOR_SECURITY_PATCH := 2025-03-01`, which is a
-stale baseline — do not ship that.
+For `miro` the current baseline (OS3.0.302.0.WOMIDXM) reports SPL **2026-08-01**
+(`post-security-patch-level` in the OTA metadata). `device/xiaomi/miro/BoardConfig.mk`
+re-states `XIAOMI_SM8750_SECURITY_PATCH := 2026-08-01`,
+`…_TIMESTAMP := 1785542400` and the three `BOARD_AVB_*_ROLLBACK_INDEX` variables after the
+common include, because `sm8750-common` still carries the 2026-02-01 values. Drop that block
+once the common tree is bumped.
 
 ### 6.5 Play Integrity
 
