@@ -22,3 +22,17 @@
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Generated vendor blobs (never commit to the kit; they go to the vendor repos)
+/vendor/xiaomi/miro/system/
+/vendor/xiaomi/miro/system_ext/
+/vendor/xiaomi/miro/product/
+/vendor/xiaomi/miro/vendor/
+/vendor/xiaomi/miro/odm/
+/vendor/xiaomi/miro/mi_ext/
+/vendor/xiaomi/sm8750-common/system/
+/vendor/xiaomi/sm8750-common/system_ext/
+/vendor/xiaomi/sm8750-common/product/
+/vendor/xiaomi/sm8750-common/vendor/
+/vendor/xiaomi/sm8750-common/odm/
+/vendor/xiaomi/sm8750-common/mi_ext/
