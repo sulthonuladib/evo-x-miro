@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "android": {
+      "source": "hyperb1iss/hyperdroid-skill",
+      "sourceType": "github",
+      "skillPath": "skills/android/SKILL.md",
+      "computedHash": "32a80d7b4fcf6b69c1b8a9db4cb1f06481fbe0529457f77d111baf6e07a5b959"
+    },
+    "android-build": {
+      "source": "hyperb1iss/hyperdroid-skill",
+      "sourceType": "github",
+      "skillPath": "skills/android-build/SKILL.md",
+      "computedHash": "ab411e1020b80f7770fd30e5f8a040a35d909ed46b4f1017cb64111e653f7b7d"
+    },
+    "android-fastboot": {
+      "source": "hyperb1iss/hyperdroid-skill",
+      "sourceType": "github",
+      "skillPath": "skills/android-fastboot/SKILL.md",
+      "computedHash": "6fb36d89630376af559ad1a2741aba4aad83251463ed9eb478dc7cf21bf5a249"
+    },
+    "lineageos": {
+      "source": "hyperb1iss/hyperdroid-skill",
+      "sourceType": "github",
+      "skillPath": "skills/lineageos/SKILL.md",
+      "computedHash": "51e0773f769b1e136ad3e9a6b6f2d0075421d7aaf5ec375505ec0d3c6169a76b"
+    }
+  }
+}
