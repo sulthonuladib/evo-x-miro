@@ -10,6 +10,7 @@ KERNEL_PATH := $(DEVICE_PATH)-kernel
 # Stock kernel version string. This is the `uname -r`-style localversion used by
 # the stock vendor_dlkm/system_dlkm module directories. Re-derive it from the
 # stock ROM if you update the kernel baseline.
+# TODO(miro): the scaffold used the OS2.0.107.0 value; OS3.0.302.0.WOMIDXM may differ.
 MIRO_KERNEL_VERSION := 6.6.30-android15-8-gc6f5283046c6-ab12364222-4k
 
 # Inherit from sm8750-common (A17 / cnb)
@@ -20,6 +21,7 @@ include device/xiaomi/sm8750-common/BoardConfigCommon.mk
 # IMPORTANT: the common tree hardcodes the Xiaomi 15 Pro super size (11811160064).
 # miro's physical super partition is SMALLER; flashing a super built at the wrong
 # size fails. Verify the real values with `lpdump` in recovery before flashing.
+# (The OS3.0.302.0 fastboot ROM's super/GPT is the authoritative source.)
 BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
 

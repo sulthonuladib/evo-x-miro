@@ -27,8 +27,9 @@ a full Evolution X checkout consumes.
   `Crisp-los/android_device_xiaomi_sm8750-common` `cnb` (already has a `miro` code path).
 - Kernel: stock string **`6.6.30-android15-8-gc6f5283046c6-ab12364222-4k`**, GKI
   `android15-6.6`. Xiaomi OSS branch `bsp-miro-v-oss`.
-- Vendor baseline: Android 15 (`PRODUCT_SHIPPING_API_LEVEL := 35`,
-  `BOARD_SHIPPING_API_LEVEL := 202404`) — the stock blobs are the input.
+- Vendor baseline: **Android 16 / HyperOS 3** (`OS3.0.302.0.WOMIDXM`) — the stock ROM at
+  `/mnt/games/miro-files/`. (The public `OS2.0.107.0` dump was Android 15; prefer the local ROM.)
+- `MIRO_KERNEL_VERSION` and the AVB rollback/security-patch values must be re-derived from that ROM.
 
 ## Conventions
 

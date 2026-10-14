@@ -11,11 +11,18 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 - **Active phase:** Phase 1 (environment) + Phase 2 (stock ROM), both blocked.
 - **Done:** Phase 0 — research, decisions, and the bring-up kit.
-- **Next action:** obtain the stock ROM (recovery; fastboot later), provision a build host,
-  then run Phase 2 extraction.
+- **Next action:** run Phase 2 — `tools/extract-stock-rom.sh /mnt/games/miro-files/miro_id_global-ota_full-OS3.0.302.0.WOMIDXM-user-16.0-e2b69f85e9.zip /mnt/games/miro-work/images`,
+  then `tools/unpack-kernel-artifacts.sh` into `device/xiaomi/miro-kernel`.
+- **⚠️ Critical:** this firmware is dated 2026-07-30 / Android 16, so its security patch level is
+  likely newer than the `XIAOMI_SM8750_SECURITY_PATCH := 2026-02-01` in the common tree. Read the
+  real SPL and **bump the rollback index in the same commit** (see `docs/maintenance.md`).
 - **Inputs:**
-  - ⛔ **Stock ROM** — needed to populate `device/xiaomi/miro-kernel` and generate the vendor trees.
-  - ⛔ **Build host** — ~250–400 GB disk, ~64 GB RAM (this machine cannot build A17).
+  - ✅ **Stock ROM** — at `/mnt/games/miro-files/`:
+    - recovery: `miro_id_global-ota_full-OS3.0.302.0.WOMIDXM-user-16.0-e2b69f85e9.zip` (`payload.bin`, 7.5 GB)
+    - fastboot: `miro_id_global_images_OS3.0.302.0.WOMIDXM_..._16.0_id_*.tgz` (9.2 GB, `images/` + `flash_all.sh`)
+    - baseline is **Android 16 / HyperOS 3** (newer than the OS2.0.107.0 dump the scaffold used).
+  - ⛔ **Build host** — ~250–400 GB disk, ~64 GB RAM. `/mnt/games` has 277 GB free; workable for a
+    single-target build if `out/` lives there and ccache is off, but tight for source + `out` together.
   - ✅ **GitHub org** — `sulthonuladib`; `origin` remote set, manifest + OTA URLs updated.
 
 ## Definition of done — "we can flash the ROM"
@@ -66,9 +73,9 @@ trees, and the next action. ✅
 **Acceptance:** `repo sync` completes; `device/xiaomi/sm8750-common` and
 `hardware/xiaomi` are present; keys exist.
 
-## Phase 2 — Stock ROM acquisition & extraction ⬜⛔
+## Phase 2 — Stock ROM acquisition & extraction 🟡
 
-**Inputs:** stock **recovery ROM** (`miro`), optionally **fastboot ROM**.
+**Inputs:** present — `/mnt/games/miro-files/` (`OS3.0.302.0.WOMIDXM`, Android 16 / HyperOS 3).
 
 | Task | Command |
 | --- | --- |
@@ -186,3 +193,6 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
 - 2026-10-14 — Phase 0 complete; kit + docs written; target `cnb` chosen.
 - 2026-10-14 — repo renamed `evo-x-miro`; `origin` remote + `.gitignore` committed;
   GitHub org resolved to `sulthonuladib`.
+- 2026-10-14 — stock ROM located at `/mnt/games/miro-files/`; baseline is **Android 16 /
+  HyperOS 3** (`OS3.0.302.0.WOMIDXM`), newer than the OS2.0.107.0 dump. Kernel version and
+  rollback index must be re-derived from this ROM.

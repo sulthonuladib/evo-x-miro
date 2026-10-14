@@ -21,10 +21,11 @@ PRODUCT_MODEL := POCO F7 Ultra
 PRODUCT_NAME := lineage_miro
 
 # Stock build identity (used for Play Integrity / assorted device checks).
-# TODO(miro): update when you rebase onto a newer stock firmware.
+# TODO(miro): replace with the exact BuildFingerprint/AOSP build id read from the
+# extracted OS3.0.302.0.WOMIDXM (Android 16 / HyperOS 3) system build.prop.
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    BuildDesc="missi-user 15 AQ3A.240829.003 OS2.0.107.0.VOMMIXM release-keys" \
-    BuildFingerprint=qti/missi/missi:15/AQ3A.240829.003/OS2.0.107.0.VOMMIXM:user/release-keys \
+    BuildDesc="missi-user 16 AQ3A.250605.031.A3 OS3.0.302.0.WOMIDXM release-keys" \
+    BuildFingerprint=qti/missi/missi:16/AQ3A.250605.031.A3/OS3.0.302.0.WOMIDXM:user/release-keys \
     DeviceProduct=miro \
     SystemName=miro_global
 
