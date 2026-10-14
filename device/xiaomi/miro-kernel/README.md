@@ -25,8 +25,9 @@ device/xiaomi/miro-kernel/
 │   ├── modules.load
 │   └── modules.blocklist
 └── system_dlkm/
-    └── 6.6.30-android15-8-gc6f5283046c6-ab12364222-4k/
-        └── *.ko              # GKI modules for the system_dlkm partition
+    └── 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k/
+        ├── kernel/…        # GKI modules for the system_dlkm partition
+        └── modules.load    # paths are relative to this directory
 ```
 
 The directory name under `system_dlkm/` must match
@@ -41,12 +42,25 @@ Everything here is produced by `tools/extract-stock-rom.sh` +
 # 1. recovery ROM -> partition images
 tools/extract-stock-rom.sh /path/to/miro-recovery-rom.zip  work/images
 
-# 2. images -> device/xiaomi/miro-kernel
-tools/unpack-kernel-artifacts.sh work/images               device/xiaomi/miro-kernel
+# 2. images -> device/xiaomi/miro-kernel (needs erofs-utils for the stock images)
+FSCK_EROFS=/path/to/fsck.erofs \
+  tools/unpack-kernel-artifacts.sh work/images device/xiaomi/miro-kernel
 ```
 
-Both scripts are thin wrappers around AOSP's `unpack_bootimg`, `payload-dumper-go`,
-`avbtool` and a read-only mount of the `vendor_dlkm` / `system_dlkm` images.
+The unpacker handles the real stock formats: EROFS `vendor_dlkm`/`system_dlkm` images,
+the LZ4+cpio vendor ramdisk, and the 8 concatenated FDTs in `vendor_boot` (split into
+`dtb/01_dtbdump_…` … `08_dtbdump_…`; the `NN_` prefixes keep the stock order). It prints
+the kernel version and the `MIRO_KERNEL_VERSION` value to set. Intermediates land in
+`.work/` and can be deleted after a successful run.
+
+The current tree was produced from **OS3.0.302.0.WOMIDXM**:
+`kernel` + `dtb/` + `dtbo.img` + 411 vendor-ramdisk modules + 380 vendor_dlkm modules +
+96 system_dlkm modules.
+
+`kernel-headers/` and `prebuilt_kernel_headers.tar.gz` are **not** produced from the stock
+ROM. They are only needed for out-of-tree module builds and come from a kernel source
+export (Strategy B, Phase 10) or a haotian-style mixed-provenance tarball. The paths in
+`BoardConfig.mk` are inert until then.
 
 ## Strategy A vs B (see docs/evolution-x-miro-bringup.md §2.4)
 
