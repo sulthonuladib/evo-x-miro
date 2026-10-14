@@ -69,5 +69,7 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Research + scaffolding complete. Blocked on the **stock ROM** and a **build host**.
-Current phase and next action: see `PLAN.md` → "Current status".
+Phases 0 and 2 are complete; Phase 3 (vendor trees) is in progress: the file list,
+extract-utils drivers and fixups are committed, the blob extraction run is pending a synced
+`cnb` tree (Phase 1) or a build host. Current phase and next action: see `PLAN.md` →
+"Current status".

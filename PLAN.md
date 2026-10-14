@@ -9,11 +9,11 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 3 (vendor trees). Phase 2 is complete; Phase 1 still needs a build host.
+- **Active phase:** Phase 3 (vendor trees, in progress). Phase 2 is complete; Phase 1 still needs a build host.
 - **Done:** Phase 0 (research + kit) and Phase 2 (stock ROM extraction + kernel artifacts).
-- **Next action:** Phase 3 — generate `vendor/xiaomi/miro` and `vendor/xiaomi/sm8750-common`
-  from `/mnt/games/miro-work/images` with `extract-files.py` + `setup-makefiles.py`, seeded
-  from the public `poco_miro_dump` list (see `vendor/xiaomi/miro/README.md`).
+- **Next action:** Phase 3 — run `device/xiaomi/miro/extract-files.py /mnt/games/miro-work/images`
+  from a synced `cnb` tree (needs `tools/extract-utils`), then `./setup-makefiles.py`; repeat
+  for the common tree. The file list + fixups are already committed.
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
@@ -98,17 +98,17 @@ trees, and the next action. ✅
 `vendor_ramdisk/`, `vendor_dlkm/`, `system_dlkm/<version>/` with `modules.load` files. ✅
 (every `modules.load` entry resolves; module sets are byte-identical to the stock images)
 
-## Phase 3 — Vendor trees ⬜
+## Phase 3 — Vendor trees 🟡
 
-**Depends on:** Phase 2.
+**Depends on:** Phase 2 (done). **Active now.**
 
-| Task | Detail |
-| --- | --- |
-| Seed `proprietary-files.txt` | import the public `poco_miro_dump` list, then prune. |
-| Write `extract-files.py` fixups | symbol versions / `add_needed` shims (copy from haotian/dada). |
-| Generate `vendor/xiaomi/miro` | `./extract-files.py <dump>` + `./setup-makefiles.py`. |
-| Generate `vendor/xiaomi/sm8750-common` | same, from the common tree. |
-| Add `BoardConfigVendor.mk` include | already wired in `BoardConfig.mk`. |
+| Task | Detail | Status |
+| --- | --- | --- |
+| Seed `proprietary-files.txt` | import the public `poco_miro_dump` list, then prune | ✅ 2,472 entries: 1,512 common-owned removed, 613 stale dropped, 29 bare paths resolved; 3,515 OS3 candidates parked in `proprietary-files-os3-candidates.txt` |
+| Write `extract-files.py` fixups | symbol versions / `add_needed` shims (copy from haotian/dada) | 🟡 miro-owned audio/display shims seeded; `check_elf` will reveal more |
+| Generate `vendor/xiaomi/miro` | `./extract-files.py <dump>` + `./setup-makefiles.py` | ⬜ needs the `tools/extract-utils` package from a synced tree (or a build host) |
+| Generate `vendor/xiaomi/sm8750-common` | same, from the common tree | ⬜ |
+| Add `BoardConfigVendor.mk` include | already wired in `BoardConfig.mk` | ✅ |
 
 **Acceptance:** `m evolution` gets past vendor makefile resolution; no missing blobs at
 `installclean`; `vendor/xiaomi/miro/miro-vendor.mk` generated.
@@ -209,6 +209,11 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
 - 2026-10-14 — stock ROM located at `/mnt/games/miro-files/`; baseline is **Android 16 /
   HyperOS 3** (`OS3.0.302.0.WOMIDXM`), newer than the OS2.0.107.0 dump. Kernel version and
   rollback index must be re-derived from this ROM.
+- 2026-10-14 — **Phase 3 started.** Seeded `device/xiaomi/miro/proprietary-files.txt`
+  (2,472 device-specific entries after removing 1,512 common-owned and 613 stale ones from
+  the public OS2.0.107.0 list), added `extract-files.py`/`setup-makefiles.py`, parked 3,515
+  new OS3 files in `proprietary-files-os3-candidates.txt`; vendor extraction run pending a
+  synced tree.
 - 2026-10-14 — **Phase 2 complete.** Dumped the recovery payload (49 partitions); populated
   `device/xiaomi/miro-kernel/` (kernel `6.6.118-…`, 8 DTBs, dtbo.img, 411+380+96 modules);
   `unpack-kernel-artifacts.sh` rewritten for EROFS/LZ4-cpio/FDT splitting; SPL corrected to

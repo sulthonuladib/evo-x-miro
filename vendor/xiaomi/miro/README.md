@@ -10,14 +10,13 @@ vendor/xiaomi/miro/
 ├── BoardConfigVendor.mk          # generated
 ├── miro-vendor.mk                # generated
 ├── Android.bp / Android.mk       # generated
-├── proprietary-files.txt         # the file list (checked in)
-├── extract-files.py              # extract_utils driver (checked in)
-├── setup-makefiles.py            # -> `./extract-files.py --regenerate_makefiles`
 └── <vendor blobs>                # generated, large, usually pushed to a separate repo
 ```
 
-`vendor/xiaomi/sm8750-common` is generated the same way, from
-`device/xiaomi/sm8750-common/proprietary-files.txt`.
+The inputs are checked into the **device tree** (this is the LineageOS convention):
+`device/xiaomi/miro/proprietary-files.txt`, `extract-files.py` and
+`setup-makefiles.py`. `vendor/xiaomi/sm8750-common` is generated the same way from
+the `device/xiaomi/sm8750-common` tree.
 
 ## Generate
 
@@ -39,20 +38,21 @@ connected device), a directory (a "dump dir"), or a factory-image URL. Passing t
 images directory lets the tool extract `system/`, `vendor/`, `odm/`, `product/`,
 `system_ext/` itself — it does not need them copied into the source-tree root.
 
-## Seed file list
+## File list
 
-A first-cut `proprietary-files.txt` for `miro` already exists in the public dump
-`Jiovanni-dump/poco_miro_dump` (4,768 lines, from `OS2.0.107.0.VOMMIXM`). Import it, then
-prune/fix:
+`device/xiaomi/miro/proprietary-files.txt` (2,472 entries) was seeded from the public dump
+`Jiovanni-dump/poco_miro_dump` (4,768 lines, `OS2.0.107.0.VOMMIXM`) and then, on 2026-10-14,
+re-checked against the OS3.0.302.0.WOMIDXM partitions:
 
-```bash
-curl -L -o proprietary-files.txt \
-  'https://raw.githubusercontent.com/Jiovanni-dump/poco_miro_dump/missi-user-15-AQ3A.240829.003-OS2.0.107.0.VOMMIXM-release-keys/aosp-device-tree/proprietary-files.txt'
-```
+- 1,512 entries owned by `device/xiaomi/sm8750-common` were removed (they are generated
+  from the common tree's list; keeping them would duplicate modules),
+- 613 entries that no longer exist in the new partitions were dropped,
+- 29 bare paths (e.g. `lib64/foo.so`) were resolved to their partition prefix.
 
-Expect to trim Xiaomi-only files (HyperOS framework, `mi_ext` overlays) and to add
-`blob_fixups` in `extract-files.py` (symbol versioning, `add_needed` shims — see the
-`xiaomi-haotian-devs` and `xiaomi-dada` trees for examples).
+`device/xiaomi/miro/proprietary-files-os3-candidates.txt` lists the 3,515 files that are
+present in OS3.0.302.0 but in neither list (camera/ADSP blobs changed a lot; compiled app
+artifacts excluded). Curate those when running the extraction, and add `blob_fixups` to
+`device/xiaomi/miro/extract-files.py` as `check_elf` reports unresolved `NEEDED` entries.
 
 ## Notes for miro specifically
 

@@ -18,3 +18,7 @@
 # Keep the checked-in file lists and makefiles
 !device/xiaomi/**/modules.load
 !device/xiaomi/**/modules.blocklist
+
+# Python bytecode
+__pycache__/
+*.pyc
