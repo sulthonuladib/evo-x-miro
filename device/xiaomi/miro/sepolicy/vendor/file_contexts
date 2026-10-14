@@ -1,0 +1,2 @@
+# miro device-specific vendor sepolicy.
+# Add rules here only after you have an avc denial to fix.

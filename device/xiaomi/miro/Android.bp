@@ -1,0 +1,9 @@
+soong_namespace {
+    imports: [
+        "device/xiaomi/sm8750-common",
+        "hardware/qcom-caf/sm8750",
+        "hardware/xiaomi",
+        "vendor/xiaomi/miro",
+        "vendor/xiaomi/sm8750-common",
+    ],
+}

@@ -1,0 +1,6 @@
+# miro-specific odm properties.
+# Keep this list minimal — general SM8750 values live in
+# device/xiaomi/sm8750-common/configs/properties/odm.prop.
+
+# QTI haptics sysfs node (used by the vibrator HAL)
+ro.odm.mm.vibrator.sys_path=/sys/class/qcom-haptics

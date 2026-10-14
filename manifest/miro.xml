@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Evolution X (cnb / Android 17) local manifest for POCO F7 Ultra (miro).
+
+  Usage (from the root of your Evolution X source tree):
+
+      mkdir -p .repo/local_manifests
+      cp manifest/miro.xml .repo/local_manifests/miro.xml
+      repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+
+  Replace PLACEHOLDER_ORG with the GitHub org/user that will host the miro trees
+  (android_device_xiaomi_miro, android_device_xiaomi_miro-kernel,
+   proprietary_vendor_xiaomi_miro, proprietary_vendor_xiaomi_sm8750-common).
+
+  NOTE: the Qualcomm CAF HALs for sm8750 (hardware/qcom-caf/sm8750/audio/*,
+  display/*, dataipa, device/qcom/sepolicy_vndr/sm8750) are already provided by
+  the base Evolution X cnb manifest via snippets/lineage.xml — do NOT add them here.
+-->
+<manifest>
+
+  <!-- Upstream A17 SM8750 Xiaomi common tree (AIDL fingerprint HAL, UDFPS,
+       sensors, VINTF, sepolicy, overlays). It already carries a miro code path. -->
+  <remote name="crisplos" fetch="https://github.com/Crisp-los" revision="cnb" />
+
+  <!-- Trees hosted by you. -->
+  <remote name="miro" fetch="https://github.com/PLACEHOLDER_ORG" revision="cnb" />
+
+  <!-- Upstream hardware interfaces. -->
+  <remote name="los" fetch="https://github.com/LineageOS" revision="lineage-24.0" />
+
+  <!-- Platform -->
+  <project path="device/xiaomi/sm8750-common" name="android_device_xiaomi_sm8750-common" remote="crisplos" />
+
+  <!-- Device -->
+  <project path="device/xiaomi/miro"        name="android_device_xiaomi_miro"        remote="miro" />
+  <project path="device/xiaomi/miro-kernel" name="android_device_xiaomi_miro-kernel" remote="miro" />
+
+  <!-- Vendor trees (generate with tools/, then push). -->
+  <project path="vendor/xiaomi/miro"          name="proprietary_vendor_xiaomi_miro"          remote="miro" />
+  <project path="vendor/xiaomi/sm8750-common" name="proprietary_vendor_xiaomi_sm8750-common" remote="miro" />
+
+  <!-- hardware/xiaomi is NOT in the Evolution X cnb manifest; add it. -->
+  <project path="hardware/xiaomi" name="android_hardware_xiaomi" remote="los" />
+
+</manifest>
