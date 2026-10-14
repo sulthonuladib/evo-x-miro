@@ -8,7 +8,7 @@
       cp manifest/miro.xml .repo/local_manifests/miro.xml
       repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
-  Replace PLACEHOLDER_ORG with the GitHub org/user that will host the miro trees
+  The miro trees are hosted under github.com/sulthonuladib
   (android_device_xiaomi_miro, android_device_xiaomi_miro-kernel,
    proprietary_vendor_xiaomi_miro, proprietary_vendor_xiaomi_sm8750-common).
 
@@ -23,7 +23,7 @@
   <remote name="crisplos" fetch="https://github.com/Crisp-los" revision="cnb" />
 
   <!-- Trees hosted by you. -->
-  <remote name="miro" fetch="https://github.com/PLACEHOLDER_ORG" revision="cnb" />
+  <remote name="miro" fetch="https://github.com/sulthonuladib" revision="cnb" />
 
   <!-- Upstream hardware interfaces. -->
   <remote name="los" fetch="https://github.com/LineageOS" revision="lineage-24.0" />

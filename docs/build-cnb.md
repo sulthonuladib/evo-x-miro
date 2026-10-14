@@ -72,8 +72,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ```bash
 cp /path/to/evo-x-miro/manifest/miro.xml .repo/local_manifests/miro.xml
-# edit PLACEHOLDER_ORG -> your GitHub org/user
-$EDITOR .repo/local_manifests/miro.xml
+# (the manifest already points at github.com/sulthonuladib)
 
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 ```
@@ -160,8 +159,8 @@ device/xiaomi/miro/overlay-evolution/Updater/res/values/strings.xml
 
 ```xml
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="updater_server_url" translatable="false">https://raw.githubusercontent.com/PLACEHOLDER_ORG/OTA/cnb/builds/miro.json</string>
-  <string name="menu_changelog_url" translatable="false">https://raw.githubusercontent.com/PLACEHOLDER_ORG/OTA/cnb/changelogs/<xliff:g id="device_name">%1$s</xliff:g>.txt</string>
+  <string name="updater_server_url" translatable="false">https://raw.githubusercontent.com/sulthonuladib/OTA/cnb/builds/miro.json</string>
+  <string name="menu_changelog_url" translatable="false">https://raw.githubusercontent.com/sulthonuladib/OTA/cnb/changelogs/<xliff:g id="device_name">%1$s</xliff:g>.txt</string>
 </resources>
 ```
 

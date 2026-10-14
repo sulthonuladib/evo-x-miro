@@ -13,10 +13,10 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 - **Done:** Phase 0 — research, decisions, and the bring-up kit.
 - **Next action:** obtain the stock ROM (recovery; fastboot later), provision a build host,
   then run Phase 2 extraction.
-- **Blockers:**
+- **Inputs:**
   - ⛔ **Stock ROM** — needed to populate `device/xiaomi/miro-kernel` and generate the vendor trees.
   - ⛔ **Build host** — ~250–400 GB disk, ~64 GB RAM (this machine cannot build A17).
-  - ⬜ **GitHub org name** — replace `PLACEHOLDER_ORG` in `manifest/miro.xml`.
+  - ✅ **GitHub org** — `sulthonuladib`; `origin` remote set, manifest + OTA URLs updated.
 
 ## Definition of done — "we can flash the ROM"
 
@@ -59,7 +59,7 @@ trees, and the next action. ✅
 | Provision host | Ubuntu 22.04/24.04, ≥12 cores, ≥64 GB RAM, ≥300 GB fs. |
 | Install `repo` + packages | see `docs/build-cnb.md` §0. |
 | `repo init -b cnb` | `https://github.com/Evolution-X/manifest`. |
-| Add `manifest/miro.xml` | replace `PLACEHOLDER_ORG`; copy to `.repo/local_manifests/`. |
+| Add `manifest/miro.xml` | already points at `sulthonuladib`; copy to `.repo/local_manifests/`. |
 | `repo sync` | lands `device/xiaomi/sm8750-common` (`cnb`) + `hardware/xiaomi`. |
 | Generate keys | `vendor/evolution-priv/keys`; **back up**. |
 
@@ -184,3 +184,5 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
 ## Change log
 
 - 2026-10-14 — Phase 0 complete; kit + docs written; target `cnb` chosen.
+- 2026-10-14 — repo renamed `evo-x-miro`; `origin` remote + `.gitignore` committed;
+  GitHub org resolved to `sulthonuladib`.
