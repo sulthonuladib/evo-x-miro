@@ -44,6 +44,7 @@ the correct firmware baseline before the first custom build. Reference:
 ## Requirements
 
 - `unzip`, `curl`
-- `payload-dumper-go` (auto-fetched via `go install`, or download a release)
+- `payload-dumper-go` — preferred: already on `PATH` (e.g. `~/.local/bin`); else the script
+  `go install`s it into `tools/bin/`, or download a release binary
 - AOSP `unpack_bootimg.py` (from a synced tree, `system/tools/mkbootimg/`)
 - `e2fsprogs` (`debugfs`) and/or root for loop mounts; `erofs-utils` for EROFS images
