@@ -12,9 +12,10 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 - **Active phase:** Phase 4 (first build) on a build host. Phase 3 (vendor trees) is complete.
 - **Done:** Phase 0 (research + kit), Phase 2 (stock ROM extraction + kernel artifacts) and
   Phase 3 (vendor trees generated from OS3.0.302.0 on 2026-10-14).
-- **Next action:** Phase 1/4 — on the build host, `repo sync`, push the generated
-  `vendor/xiaomi/{miro,sm8750-common}` makefiles + blobs to the vendor repos, then
-  `lunch`/`m evolution`. The first real `check_elf` triage happens there (see Phase 3 notes).
+- **Next action:** Phase 1/4 — on the build host, `repo sync` (the `sulthonuladib` repos are
+  published on `cnb`; install `git-lfs` for the three LFS objects in
+  `proprietary_vendor_xiaomi_miro`), then `lunch`/`m evolution`. The first real `check_elf`
+  triage happens there (see Phase 3 notes).
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
@@ -33,7 +34,9 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
     - baseline is **Android 16 / HyperOS 3** (newer than the OS2.0.107.0 dump the scaffold used).
   - ⛔ **Build host** — ~250–400 GB disk, ~64 GB RAM. `/mnt/games` has 277 GB free; workable for a
     single-target build if `out/` lives there and ccache is off, but tight for source + `out` together.
-  - ✅ **GitHub org** — `sulthonuladib`; `origin` remote set, manifest + OTA URLs updated.
+  - ✅ **GitHub org** — `sulthonuladib`; `origin` remote set, manifest + OTA URLs updated. The
+    `android_device_xiaomi_miro{,-kernel}` and `proprietary_vendor_xiaomi_{miro,sm8750-common}`
+    repos are published on `cnb` (see Phase 3).
 
 ## Definition of done — "we can flash the ROM"
 
@@ -128,6 +131,14 @@ needs the build host.
 - `vendor/xiaomi/sm8750-common/{Android.bp,Android.mk,sm8750-common-vendor.mk,BoardConfigVendor.mk}`
   (1,175 modules).
 - `proprietary-files-os3-candidates.txt` is the pre-curation snapshot (3,515 files).
+
+**Published (github.com/sulthonuladib, default branch `cnb`):**
+
+- `android_device_xiaomi_miro`, `android_device_xiaomi_miro-kernel`,
+  `proprietary_vendor_xiaomi_miro`, `proprietary_vendor_xiaomi_sm8750-common`.
+- `proprietary_vendor_xiaomi_miro` stores the three files over GitHub's 100 MB limit with
+  **Git LFS** (`unet.serialized.bin`, `libarcsoft_turbo_fusion_mfnr.so`,
+  `libarcsoft_raw_sr.so`); build hosts must install `git-lfs` to fetch those objects.
 
 **Left for the build host (Phase 4):**
 
