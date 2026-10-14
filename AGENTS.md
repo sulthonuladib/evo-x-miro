@@ -45,10 +45,24 @@ a full Evolution X checkout consumes.
   because the common tree still carries `2026-02-01`; bump both together (and bump the
   common tree once forked) on any stock-firmware update.
 - **Enforcing SELinux.** The `cnb` tree is enforcing; keep it that way.
-- **This machine cannot build A17** (46 GB disk / 31 GB RAM vs ~250 GB / 64 GB). It can run
-  the extraction tooling. Builds happen on a host/CI.
+- **This machine is the build host now.** The Evolution X `cnb` tree lives at
+  `/mnt/games/evo` (partial clone, `blob:limit=10M`, `--git-lfs`), `out/` on the same fs.
+  20 threads, 31 GB RAM + 62 GB swap → build with `m -j6` and `USE_CCACHE=0`. Disk is the
+  binding constraint: the synced source is ~185 GB (`.repo` ~78 GB + worktree ~107 GB), so
+  free `miro-work`/stock zips and prune `.repo` if `out/` does not fit.
 - **Keep a single source of truth.** Device facts live in `docs/`; the kit points at them.
   When you learn something new, edit the owning doc, don't duplicate it.
+
+## Context window & handoff
+
+- Sessions have a **1M-token** context window. Do **not** trigger compaction; if a tool offers
+  it, decline and hand off instead.
+- Before any long-running step (a `repo sync`, a full `m evolution`) and whenever the window is
+  getting full, stop and write a handoff: current state, exact next commands, open decisions,
+  and the file paths involved. Put it in `PLAN.md` → `Current status` (durable) **and** in chat,
+  so a fresh session can resume without re-deriving anything.
+- Keep handoffs self-contained: a new session starts from `AGENTS.md` → `PLAN.md` and must not
+  depend on the previous conversation.
 
 ## Agent roster
 
@@ -69,7 +83,9 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Phases 0, 2 and 3 are complete: the vendor trees were generated from OS3.0.302.0 (blobs are
-gitignored, the generated makefiles are committed in `vendor/xiaomi/`). Blocked on a **build
-host** for the first `m evolution` and the real `check_elf` triage. Current phase and next
-action: see `PLAN.md` → "Current status".
+Phases 0, 2 and 3 are complete. The Evolution X `cnb` build tree is at `/mnt/games/evo`
+(partial clone, `--git-lfs`); the first sync left 4 failed projects
+(`platform/system/unwinding`, `platform/external/perfmark`, `platform/external/python/cpython3`,
+`platform/external/skia`), so it needs one re-run. Next: finish the sync → signing keys →
+`lunch` → `m -j6 evolution`, then the real `check_elf` triage. Current phase and next action:
+see `PLAN.md` → "Current status".
