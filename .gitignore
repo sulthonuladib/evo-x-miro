@@ -2,12 +2,18 @@
 /work/
 /stock-images/
 /tools/bin/
+/out/
+**/.work/
 
 # Large binaries that get regenerated from the stock ROM
 *.img
 *.img.xz
 *.zip
 *.tar.gz
+
+# ...except the prebuilt kernel artifacts, which must be committed
+!device/xiaomi/miro-kernel/dtbo.img
+!device/xiaomi/miro-kernel/prebuilt_kernel_headers.tar.gz
 
 # Keep the checked-in file lists and makefiles
 !device/xiaomi/**/modules.load

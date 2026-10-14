@@ -46,5 +46,9 @@ the correct firmware baseline before the first custom build. Reference:
 - `unzip`, `curl`
 - `payload-dumper-go` — preferred: already on `PATH` (e.g. `~/.local/bin`); else the script
   `go install`s it into `tools/bin/`, or download a release binary
-- AOSP `unpack_bootimg.py` (from a synced tree, `system/tools/mkbootimg/`)
-- `e2fsprogs` (`debugfs`) and/or root for loop mounts; `erofs-utils` for EROFS images
+- AOSP `unpack_bootimg.py` (from a synced tree, `system/tools/mkbootimg/`, or on `PATH`)
+- `lz4` and `cpio` — the stock vendor ramdisk is an LZ4-compressed cpio
+- `python3` — splits the concatenated FDTs from `vendor_boot`
+- `erofs-utils` (`fsck.erofs`) — the stock Android 16 `vendor_dlkm`/`system_dlkm` images
+  are EROFS. Set `FSCK_EROFS=/path/to/fsck.erofs` if it is not on `PATH`. Older/ext4
+  images fall back to `e2fsprogs` (`debugfs`) + `simg2img` for sparse images.
