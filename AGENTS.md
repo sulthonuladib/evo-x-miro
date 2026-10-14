@@ -69,7 +69,7 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Phases 0 and 2 are complete; Phase 3 (vendor trees) is in progress: the file list,
-extract-utils drivers and fixups are committed, the blob extraction run is pending a synced
-`cnb` tree (Phase 1) or a build host. Current phase and next action: see `PLAN.md` →
-"Current status".
+Phases 0, 2 and 3 are complete: the vendor trees were generated from OS3.0.302.0 (blobs are
+gitignored, the generated makefiles are committed in `vendor/xiaomi/`). Blocked on a **build
+host** for the first `m evolution` and the real `check_elf` triage. Current phase and next
+action: see `PLAN.md` → "Current status".

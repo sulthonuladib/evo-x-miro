@@ -49,45 +49,19 @@ lib_fixups: lib_fixups_user_type = {
     ): lib_fixup_remove,
 }
 
-# Device-specific fixups. The common-tree fixups live in
-# device/xiaomi/sm8750-common/extract-files.py and only apply to files owned by
-# the common list; the entries below are miro-owned copies of the same shims.
-# Add to this dict when extract-files.py reports unresolved NEEDED entries.
+# miro-owned blobs only. The shared audio/display shims that used to be seeded
+# here now live in device/xiaomi/sm8750-common/extract-files.py: the blobs they
+# patch are owned by the common tree (the device list no longer duplicates
+# them), so the common module applies those fixups. Keep this dict in sync with
+# the device list when regenerating from a new dump.
 blob_fixups: blob_fixups_user_type = {
-    'vendor/lib64/libwfdmmsrc_proprietary.so': blob_fixup()
+    # The QTI sound trigger HAL was built against the V2 AIDL audio types; the
+    # tree ships the V3/V6 interface modules. Same shim as the common tree's
+    # audio HALs (see sm8750-common/extract-files.py).
+    'vendor/lib64/hw/libsoundtriggerhal.qti.so': blob_fixup()
         .replace_needed(
             'android.media.audio.common.types-V2-ndk.so',
             'android.media.audio.common.types-V3-ndk.so',
-        ),
-    'vendor/lib64/hw/libaudiocorehal.qti.so': blob_fixup()
-        .replace_needed(
-            'android.hardware.audio.core.sounddose-V1-ndk.so',
-            'android.hardware.audio.core.sounddose-V2-ndk_xiaomi.so',
-        ),
-    'vendor/lib64/libaudioserviceexampleimpl.so': blob_fixup()
-        .add_needed('libaudioutils_shim.so')
-        .replace_needed(
-            'android.hardware.audio.core.sounddose-V2-ndk.so',
-            'android.hardware.audio.core.sounddose-V2-ndk_xiaomi.so',
-        )
-        .replace_needed(
-            'android.hardware.bluetooth.audio-impl.so',
-            'android.hardware.bluetooth.audio-impl_xiaomi.so',
-        )
-        .replace_needed(
-            'libbluetooth_audio_session_aidl.so',
-            'libbluetooth_audio_session_aidl_xiaomi.so',
-        )
-        .replace_needed(
-            'libaudio_aidl_conversion_common_ndk.so',
-            'libaudio_aidl_conversion_common_ndk_xiaomi.so',
-        ),
-    'vendor/lib64/hw/libaudioeffecthal.qti.so': blob_fixup()
-        .binary_regex_replace(b'libtinyxml2.so\x00', b'libtinyxmlQ.so\x00'),
-    'vendor/lib64/libsxrservice.so': blob_fixup()
-        .replace_needed(
-            'android.hardware.common-V2-ndk_platform.so',
-            'android.hardware.common-V2-ndk.so',
         ),
 }
 

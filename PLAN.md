@@ -9,11 +9,12 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 3 (vendor trees, in progress). Phase 2 is complete; Phase 1 still needs a build host.
-- **Done:** Phase 0 (research + kit) and Phase 2 (stock ROM extraction + kernel artifacts).
-- **Next action:** Phase 3 — run `device/xiaomi/miro/extract-files.py /mnt/games/miro-work/images`
-  from a synced `cnb` tree (needs `tools/extract-utils`), then `./setup-makefiles.py`; repeat
-  for the common tree. The file list + fixups are already committed.
+- **Active phase:** Phase 4 (first build) on a build host. Phase 3 (vendor trees) is complete.
+- **Done:** Phase 0 (research + kit), Phase 2 (stock ROM extraction + kernel artifacts) and
+  Phase 3 (vendor trees generated from OS3.0.302.0 on 2026-10-14).
+- **Next action:** Phase 1/4 — on the build host, `repo sync`, push the generated
+  `vendor/xiaomi/{miro,sm8750-common}` makefiles + blobs to the vendor repos, then
+  `lunch`/`m evolution`. The first real `check_elf` triage happens there (see Phase 3 notes).
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
@@ -98,20 +99,46 @@ trees, and the next action. ✅
 `vendor_ramdisk/`, `vendor_dlkm/`, `system_dlkm/<version>/` with `modules.load` files. ✅
 (every `modules.load` entry resolves; module sets are byte-identical to the stock images)
 
-## Phase 3 — Vendor trees 🟡
+## Phase 3 — Vendor trees ✅
 
-**Depends on:** Phase 2 (done). **Active now.**
+**Depends on:** Phase 2 (done).
 
 | Task | Detail | Status |
 | --- | --- | --- |
-| Seed `proprietary-files.txt` | import the public `poco_miro_dump` list, then prune | ✅ 2,472 entries: 1,512 common-owned removed, 613 stale dropped, 29 bare paths resolved; 3,515 OS3 candidates parked in `proprietary-files-os3-candidates.txt` |
-| Write `extract-files.py` fixups | symbol versions / `add_needed` shims (copy from haotian/dada) | 🟡 miro-owned audio/display shims seeded; `check_elf` will reveal more |
-| Generate `vendor/xiaomi/miro` | `./extract-files.py <dump>` + `./setup-makefiles.py` | ⬜ needs the `tools/extract-utils` package from a synced tree (or a build host) |
-| Generate `vendor/xiaomi/sm8750-common` | same, from the common tree | ⬜ |
+| Seed `proprietary-files.txt` | import the public `poco_miro_dump` list, then prune | ✅ 2,472 entries seeded; extraction then revealed 42 common-owned duplicates, 30 HIDL interface libs and 7 `system/system/` prefixes to correct |
+| Curate camera/ADSP | pull OS3-only blobs from `proprietary-files-os3-candidates.txt` | ✅ 477 entries imported (camera configs, CamX/SNPE/ADSP libs); 14 vendor→odm symlinks re-expressed with `;SYMLINK=` |
+| Write `extract-files.py` fixups | symbol versions / `add_needed` shims | ✅ 1 miro-owned shim (`libsoundtriggerhal.qti.so` audio types V2→V3); the shared audio/display shims live in the common tree because those blobs are common-owned |
+| Generate `vendor/xiaomi/miro` | `./extract-files.py <dump>` + `./setup-makefiles.py` | ✅ 1,051 modules, no duplicate module names |
+| Generate `vendor/xiaomi/sm8750-common` | same, from the common tree | ✅ 1,175 modules, no duplicate module names |
 | Add `BoardConfigVendor.mk` include | already wired in `BoardConfig.mk` | ✅ |
 
 **Acceptance:** `m evolution` gets past vendor makefile resolution; no missing blobs at
-`installclean`; `vendor/xiaomi/miro/miro-vendor.mk` generated.
+`installclean`; `vendor/xiaomi/miro/miro-vendor.mk` generated. The vendor makefiles are
+generated and internally consistent (no duplicate modules); the real `check_elf` pass still
+needs the build host.
+
+**Generated 2026-10-14 from OS3.0.302.0.WOMIDXM:**
+
+- `device/xiaomi/miro/proprietary-files.txt` — 2,842 entries after de-duplication against the
+  common list, `system/system/` prefix fixes, HIDL-interface pruning (the `system_ext`/`product`
+  copies the common tree already defines at `vendor`) and camera/ADSP curation.
+- `device/xiaomi/miro/extract-files.py` — one miro-owned `blob_fixup` plus the `lib_fixups`
+  shared with the common tree.
+- `vendor/xiaomi/miro/{Android.bp,Android.mk,miro-vendor.mk,BoardConfigVendor.mk}` (1,051 modules).
+- `vendor/xiaomi/sm8750-common/{Android.bp,Android.mk,sm8750-common-vendor.mk,BoardConfigVendor.mk}`
+  (1,175 modules).
+- `proprietary-files-os3-candidates.txt` is the pre-curation snapshot (3,515 files).
+
+**Left for the build host (Phase 4):**
+
+- Real `check_elf` triage (`check_elf_files: true` in both `Android.bp` files). Static analysis
+  flags 267 `DT_NEEDED` names not provided by the blob sets; most are source-built AOSP/QTI
+  interfaces (their version mismatch with older stock blobs is the usual source of fixups).
+- The upstream `Crisp-los/android_device_xiaomi_sm8750-common` list still carries 11 entries
+  that do not exist on `miro` (ST NFC service/configs, `libtouchreport_alg.so`, the 32-bit
+  gralloc/mapper libs and the 32-bit touchfeature copy rule). They were pruned locally to
+  generate the common vendor tree; fork/patch the common tree so a fresh extraction is
+  reproducible.
 
 ## Phase 4 — First build ⬜
 
@@ -214,6 +241,14 @@ See `docs/evolution-x-miro-bringup.md` §2.4 (Strategy B).
   the public OS2.0.107.0 list), added `extract-files.py`/`setup-makefiles.py`, parked 3,515
   new OS3 files in `proprietary-files-os3-candidates.txt`; vendor extraction run pending a
   synced tree.
+- 2026-10-14 — **Phase 3 complete.** Cloned `tools/extract-utils` + `sm8750-common`; generated
+  both vendor trees from the OS3.0.302.0 images. The seeded list was corrected during the run:
+  42 common-owned duplicates, 30 HIDL interface libs (source-built) and 7 `system/system/`
+  prefixes removed/fixed; 477 camera/ADSP entries curated from the OS3 candidates; 14
+  vendor→odm symlinks re-expressed with `;SYMLINK=`. Both `Android.bp` files now have zero
+  duplicate module names. Added one miro-owned `blob_fixup` (`libsoundtriggerhal.qti.so`).
+  Generated makefiles committed; blobs stay gitignored. Remaining `check_elf` triage and the
+  11-entry common-tree prune are documented in Phase 3 for the build host.
 - 2026-10-14 — **Phase 2 complete.** Dumped the recovery payload (49 partitions); populated
   `device/xiaomi/miro-kernel/` (kernel `6.6.118-…`, 8 DTBs, dtbo.img, 411+380+96 modules);
   `unpack-kernel-artifacts.sh` rewritten for EROFS/LZ4-cpio/FDT splitting; SPL corrected to

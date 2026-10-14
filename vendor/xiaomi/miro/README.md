@@ -40,18 +40,24 @@ images directory lets the tool extract `system/`, `vendor/`, `odm/`, `product/`,
 
 ## File list
 
-`device/xiaomi/miro/proprietary-files.txt` (2,472 entries) was seeded from the public dump
-`Jiovanni-dump/poco_miro_dump` (4,768 lines, `OS2.0.107.0.VOMMIXM`) and then, on 2026-10-14,
-re-checked against the OS3.0.302.0.WOMIDXM partitions:
+`device/xiaomi/miro/proprietary-files.txt` (2,842 entries) was seeded from the public dump
+`Jiovanni-dump/poco_miro_dump` (4,768 lines, `OS2.0.107.0.VOMMIXM`) and then re-checked
+against the OS3.0.302.0.WOMIDXM partitions. The extraction run corrected what the seed
+missed:
 
-- 1,512 entries owned by `device/xiaomi/sm8750-common` were removed (they are generated
-  from the common tree's list; keeping them would duplicate modules),
-- 613 entries that no longer exist in the new partitions were dropped,
-- 29 bare paths (e.g. `lib64/foo.so`) were resolved to their partition prefix.
+- 42 entries owned by `device/xiaomi/sm8750-common` were dropped (they are generated from
+  the common tree's list; keeping them defined duplicate Soong modules),
+- 30 HIDL interface libs that the A17 source builds were dropped (`system_ext`/`product`
+  copies the common tree already defines at `vendor`, plus the real Adreno files behind its
+  symlinks),
+- 7 `system/system/...` entries that used an extra `system/` level were fixed,
+- 477 camera/ADSP entries were curated from `proprietary-files-os3-candidates.txt` (camera
+  configs and CamX/SNPE/ADSP libs); 14 vendor→odm symlinks were re-expressed with
+  `;SYMLINK=`.
 
-`device/xiaomi/miro/proprietary-files-os3-candidates.txt` lists the 3,515 files that are
-present in OS3.0.302.0 but in neither list (camera/ADSP blobs changed a lot; compiled app
-artifacts excluded). Curate those when running the extraction, and add `blob_fixups` to
+`device/xiaomi/miro/proprietary-files-os3-candidates.txt` (3,515 files) is the pre-curation
+snapshot of the OS3 files that were in neither list (compiled app artifacts excluded).
+Regenerate it when processing a new dump. Add `blob_fixups` to
 `device/xiaomi/miro/extract-files.py` as `check_elf` reports unresolved `NEEDED` entries.
 
 ## Notes for miro specifically
