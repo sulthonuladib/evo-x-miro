@@ -1,4 +1,4 @@
-# miro-kernel-extract
+# evo-x-miro
 
 Bring-up kit for **Evolution X (Android 17 / `cnb`)** on the **POCO F7 Ultra**
 (Redmi K80 Pro), codename **`miro`**, platform **`sun`** (Snapdragon 8 Elite, SM8750).

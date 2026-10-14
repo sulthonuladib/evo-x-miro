@@ -71,7 +71,7 @@ export PATH="$HOME/.local/bin:$PATH"
 ## 2. Add the miro local manifest
 
 ```bash
-cp /path/to/miro-kernel-extract/manifest/miro.xml .repo/local_manifests/miro.xml
+cp /path/to/evo-x-miro/manifest/miro.xml .repo/local_manifests/miro.xml
 # edit PLACEHOLDER_ORG -> your GitHub org/user
 $EDITOR .repo/local_manifests/miro.xml
 
