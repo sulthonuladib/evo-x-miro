@@ -13,6 +13,8 @@ a full Evolution X checkout consumes.
 ## Orientation
 
 - **`PLAN.md`** — phased roadmap, current status, and the definition of "flashable". Start here for "what do we do next".
+- **`HANDOFF.md`** — the previous session's handoff: current state, exact next commands, open
+  decisions. Read it before `PLAN.md`; it is refreshed each session and may go stale.
 - **`docs/evolution-x-miro-bringup.md`** — the research: kernel, ROM codebase, hardware map, sources.
 - **`docs/build-cnb.md`** — the build runbook (host setup → `m evolution`).
 - **`docs/maintenance.md`** — syncing with Evolution X, firmware/vendor updates, releasing.
