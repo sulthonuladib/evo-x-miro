@@ -105,6 +105,28 @@ cd vendor/evolution-priv/keys && ./keys.sh
 
 From this kit (see `tools/README.md` for detail):
 
+The vendor-tree step needs LineageOS' `extract_utils` package and the helper tools it
+resolves under `prebuilts/`; a synced `cnb` tree already has both. From a bare kit:
+
+```bash
+# extract-utils + the upstream common device tree
+# (both are build inputs, not part of this kit — they are gitignored)
+git clone --depth 1 https://github.com/LineageOS/android_tools_extract-utils tools/extract-utils
+git clone --depth 1 -b cnb \
+    https://github.com/Crisp-los/android_device_xiaomi_sm8750-common device/xiaomi/sm8750-common
+
+# helper tools under prebuilts/ (patchelf et al. come from LineageOS)
+git clone --depth 1 -b lineage-24.0 \
+    https://github.com/LineageOS/android_prebuilts_extract-tools prebuilts/extract-tools
+for t in brotli; do mkdir -p prebuilts/build-tools/linux-x86/bin && ln -sf "$(command -v $t)" prebuilts/build-tools/linux-x86/bin/$t; done
+mkdir -p prebuilts/jdk/jdk21/linux-x86/bin && ln -sf "$(command -v java)" prebuilts/jdk/jdk21/linux-x86/bin/java
+mkdir -p prebuilts/clang/host/linux-x86/llvm-binutils-stable
+for t in llvm-strip llvm-objdump; do ln -sf "$(command -v $t)" prebuilts/clang/host/linux-x86/llvm-binutils-stable/$t; done
+```
+
+`extract_utils` unpacks EROFS with `fsck.erofs`; put it on `PATH` (e.g.
+`export PATH=$HOME/.local/opt/erofs/usr/bin:$PATH`).
+
 ```bash
 tools/extract-stock-rom.sh ~/Downloads/miro-recovery-rom.zip work/images
 
@@ -119,8 +141,9 @@ Then **verify** the values in `device/xiaomi/miro/BoardConfig.mk`:
 
 - `MIRO_KERNEL_VERSION` — must match the `system_dlkm/lib/modules/<version>` directory.
 - `BOARD_SUPER_PARTITION_SIZE` / `BOARD_QTI_DYNAMIC_PARTITIONS_SIZE` — confirm with
-  `lpdump` in recovery or by reading the stock super image. Stock reports
-  `9126805504` / `9122611200`.
+  `lpdump` in recovery or by reading the stock super image. The OS3.0.302.0 baseline reports
+  `11811160064` / `11809841488` (11 GiB); the old OS2.0.107.0 `9126805504` / `9122611200` is
+  stale.
 - AVB rollback indexes live in `device/xiaomi/sm8750-common/BoardConfigCommon.mk`
   (`XIAOMI_SM8750_SECURITY_PATCH`). Set it **at or above** the SPL reported by the
   firmware you actually flash.
