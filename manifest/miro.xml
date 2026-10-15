@@ -12,9 +12,11 @@
   (android_device_xiaomi_miro, android_device_xiaomi_miro-kernel,
    proprietary_vendor_xiaomi_miro, proprietary_vendor_xiaomi_sm8750-common).
 
-  NOTE: the Qualcomm CAF HALs for sm8750 (hardware/qcom-caf/sm8750/audio/*,
-  display/*, dataipa, device/qcom/sepolicy_vndr/sm8750) are already provided by
-  the base Evolution X cnb manifest via snippets/lineage.xml — do NOT add them here.
+  NOTE: the Qualcomm CAF HALs for sm8750 (audio/*, display/*) are provided by
+  the base Evolution X cnb manifest via snippets/lineage.xml. Three QTI/LineageOS
+  trees that carry miro build fixes are forked to sulthonuladib and overridden
+  below: hardware/qcom-caf/common, hardware/qcom-caf/sm8750/dataipa and
+  device/qcom/sepolicy_vndr/sm8750.
 -->
 <manifest>
 
@@ -42,5 +44,23 @@
 
   <!-- hardware/xiaomi is NOT in the Evolution X cnb manifest; add it. -->
   <project path="hardware/xiaomi" name="android_hardware_xiaomi" remote="los" />
+
+  <!-- QTI/LineageOS trees with miro build fixes, forked to sulthonuladib.
+       remove-project drops the base-manifest copy (the sepolicy name covers all
+       sm* paths; only sm8750 is re-added, which is all miro needs). -->
+  <remove-project name="LineageOS/android_hardware_qcom-caf_common" />
+  <project path="hardware/qcom-caf/common"
+           name="android_hardware_qcom-caf_common"
+           remote="miro" revision="lineage-24.0" />
+
+  <remove-project name="LineageOS/android_vendor_qcom_opensource_dataipa" />
+  <project path="hardware/qcom-caf/sm8750/dataipa"
+           name="android_vendor_qcom_opensource_dataipa"
+           remote="miro" revision="lineage-24.0-caf-sm8750" />
+
+  <remove-project name="LineageOS/android_device_qcom_sepolicy_vndr" />
+  <project path="device/qcom/sepolicy_vndr/sm8750"
+           name="android_device_qcom_sepolicy_vndr"
+           remote="miro" revision="lineage-24.0-caf-sm8750" />
 
 </manifest>
