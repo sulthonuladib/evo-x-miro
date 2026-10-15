@@ -294,31 +294,31 @@ same switch the tree already uses per-blob via `;DISABLE_DEPS` (14 uses).
 This skips the build-time `check_elf_file` (SONAME/DT_NEEDED/symbol/page-size) validation
 for stock blobs; the blobs themselves are unchanged.
 
-## Reproducibility gaps to close (before a fresh `repo sync`)
+## Reproducibility — all fixes pushed ✅
 
-1. `device/qcom/sepolicy_vndr/sm8750/generic/vendor/common/genfs_contexts` (failure 1).
-2. The QTI `dataipa` + `common` header fix above (failure 3).
-3. `vendor/lineage/build/tasks/build-manifest_xml.mk` `-r` removal (failure 4).
-4. `device/xiaomi/miro/proprietary-files.txt` + `vendor/xiaomi/miro/miro-vendor.mk`
-   `aconfig_flags.pb` removal (failure 5).
-5. The 6 camera XML declaration fixups (failure 6) — after regeneration run:
-   `sed -i '1s/^<?xml=version=/<?xml version=/' vendor/xiaomi/miro/proprietary/odm/etc/camera/{enhance_motiontuning,motiontuning,snsc_bokeh_motiontuning,snsc_enhance_motiontuning,snsc_motiontuning,snsc_noface_motiontuning}.xml`
-6. `odm/etc/vintf/manifest/AHBF-V3-service.xml` removal (failure 7).
-7. 28 extra HAL entries in
-   `device/xiaomi/sm8750-common/configs/vintf/compatibility_matrix.xiaomi.xml` (failure 8) —
-   diff against `/tmp/compatibility_matrix.xiaomi.xml.orig`.
-8. 7 SONAME fixups (failure 9) — now declared in
-   `device/xiaomi/miro/extract-files.py` (`blob_fixup().fix_soname()`), so a regeneration
-   reapplies them.
-9. `check_elf=False` in both `extract-files.py` (failure 10) — a regeneration then emits
-   `check_elf_files: false` on each prebuilt (already applied to the generated Android.bp).
-10. **Done:** `device/xiaomi/sm8750-common` is forked to
-   `sulthonuladib/android_device_xiaomi_sm8750-common` (`cnb` = `5219eb6`) and
-   `manifest/miro.xml` points at the fork.
+Every build fix is committed to a remote and referenced by `manifest/miro.xml`, so a fresh
+`repo init` + `repo sync` reproduces the working tree ~ the build:
 
-Pushed/committed 2026-10-15: kit `d78c370` (+manifest), `device/xiaomi/miro`
-`sulthonuladib/android_device_xiaomi_miro` `cnb` `1a9ce4e`, vendor
-`vendor/xiaomi/{miro,sm8750-common}` `cnb` (`3b22413`/`4d24ec0`), common fork `5219eb6`.
+| Fix (failure) | Repo / branch | Commit |
+| --- | --- | --- |
+| sepolicy qcom-battery genfscon (1) | `sulthonuladib/android_device_qcom_sepolicy_vndr` `lineage-24.0-caf-sm8750` | `5b516ec1` |
+| dataipa uapi header lib (3) | `sulthonuladib/android_vendor_qcom_opensource_dataipa` `lineage-24.0-caf-sm8750` | `6cdac32` |
+| common `qti_ipa_kernel_headers` re-export (3) | `sulthonuladib/android_hardware_qcom-caf_common` `lineage-24.0` | `54f01e8` |
+| aconfig/AHBF removal, SONAME fixups, `check_elf=False` (5,7,9,10) | `sulthonuladib/android_device_xiaomi_miro` `cnb` | `3e152a8` |
+| blobs: aconfig/AHBF deletion, 6 camera XML, 7 SONAME, `check_elf_files:false` (5,6,7,9,10) | `sulthonuladib/proprietary_vendor_xiaomi_miro` `cnb` | `0802443` |
+| generated file lists (`check_elf_files:false`) (10) | `sulthonuladib/proprietary_vendor_xiaomi_sm8750-common` `cnb` | `226e0c5` |
+| 28 VINTF matrix HALs + `check_elf=False` (8,10) | `sulthonuladib/android_device_xiaomi_sm8750-common` `cnb` | `96941d1` |
+| manifest overrides for the 3 forked QTI/LOS trees | `sulthonuladib/evo-x-miro` `main` | `3e2a062` |
+| docs (this file, PLAN, AGENTS) | `sulthonuladib/evo-x-miro` `main` | `ad62b8c`+ |
+
+**One remaining local-only edit — only needed on this pruned host, not after a real
+`repo sync`:** `vendor/lineage/build/tasks/build-manifest_xml.mk` drops `-r` (failure 4).
+A fresh sync has intact git metadata, so `repo manifest -r` works; restore the upstream
+file after re-init.
+
+**Build-tree git is dead:** `.repo/{projects,project-objects}` were pruned to free disk, so
+`/mnt/games/evo` cannot `repo`/`git` until a fresh `repo init && repo sync`. The worktree
+and the built zip are intact.
 
 ## Next commands — Phase 5 (flash/boot)
 
