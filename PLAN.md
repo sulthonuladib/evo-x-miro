@@ -26,12 +26,40 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
     prune it only if `out/` drives `/mnt/games` below ~15 GB free.
   - Lunch target: `lineage_miro-userdebug` → `EvolutionX-17.0-20261015-miro-12.3-Unofficial`
     (`PLATFORM_VERSION=17`, `TARGET_DEVICE=miro`, `WITH_GMS=true`).
-- **Next action:** `. build/envsetup.sh && lunch lineage_miro-userdebug &&`
-  `USE_CCACHE=0 m -j6 evolution`, launched in the background with output at
-  `/mnt/games/evo/build.log`. First triage point is the first Soong/ninja error block
-  (typically `check_elf` "cannot find lib…"); fixes go in
-  `device/xiaomi/miro/extract-files.py` (`blob_fixups`) or `proprietary-files.txt`, then
-  regenerate with `./setup-makefiles.py` (see Phase 3).
+- **Blocker found at first Soong analysis (2026-10-15):** the OS3 vendor trees are **incomplete
+  and inconsistent**, so `m -j6 evolution` never gets past Soong. The build tree
+  `/mnt/games/evo` was patched in place to prove this out (uncommitted; do not trust it), but the
+  correct fix is to **regenerate** the vendor trees from the full OS3 dump. Root causes:
+  1. `device/xiaomi/miro/proprietary-files.txt` is missing dozens of OS3 blobs present in the
+     stock `odm`/`vendor`/`system_ext` images (e.g. `libmpbase`, `libchilog`, the Xiaomi camera
+     stack, and many `vendor.xiaomi.*-V*-ndk` AIDL libs). 71 such paths were identified and
+     appended to the kit's list; the 3,037-entry `proprietary-files-os3-candidates.txt` still
+     needs full reconciliation.
+  2. Both vendor `Android.bp` `soong_namespace` blocks are missing
+     `"hardware/qcom-caf/wlan/qcwcn"`; without it, miro/common modules cannot see the source
+     `libwifi-hal-ctrl`, and restoring the prebuilt causes a namespace-duplicate error.
+  3. ~195 miro vendor modules duplicate source modules (AOSP/QTI) and must be dropped from
+     `proprietary-files.txt`, not patched out of the generated `Android.bp`. Removing them
+     wholesale by name is wrong (some, e.g. `libwifi-hal-ctrl`, have no enabled source and the
+     prebuilt is required).
+  4. Some libs needed by the common tree (`libframemaster*`, `libfcmintf`,
+     `vendor.xiaomi.hardware.frame*-V1-ndk`) are `system_ext` blobs that belong in the common
+     vendor tree, not miro.
+- **Next action (regenerate vendor trees, then build):** the full OS3 dump is cached at
+  `/mnt/games/miro-work/images` (all partitions from the OS3 OTA `payload.bin`):
+  ```bash
+  export PATH="$HOME/.local/bin:$HOME/.local/opt/erofs/usr/bin:$PATH"
+  cd /mnt/games/evo
+  # 1) reconcile device/xiaomi/miro/proprietary-files.txt (and the common list) against
+  #    proprietary-files-os3-candidates.txt; drop source-built dupes, add the missing blobs
+  # 2) add hardware/qcom-caf/wlan/qcwcn to namespace_imports in
+  #    device/xiaomi/{miro,sm8750-common}/extract-files.py
+  # 3) regenerate the vendor trees (see docs/build-cnb.md / tools/README.md):
+  (cd device/xiaomi/miro          && ./extract-files.py /mnt/games/miro-work/images && ./setup-makefiles.py)
+  (cd device/xiaomi/sm8750-common && ./extract-files.py /mnt/games/miro-work/images && ./setup-makefiles.py)
+  # 4) commit + push vendor/xiaomi/{miro,sm8750-common}; re-sync the build tree
+  # 5) USE_CCACHE=0 m -j6 evolution
+  ```
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in

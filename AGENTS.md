@@ -85,8 +85,9 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Phases 0–3 are complete and Phase 1 (source sync) is now complete too: the Evolution X `cnb`
-tree at `/mnt/games/evo` finished `repo sync` successfully (all four previously-failed
-projects recovered). Signing keys are generated in `vendor/evolution-priv/keys`. Active
-phase is **Phase 4**: `lunch lineage_miro-userdebug` → `USE_CCACHE=0 m -j6 evolution`, then
-the real `check_elf` triage. Current phase and next action: see `PLAN.md` → "Current status".
+Phases 0–2 are complete, Phase 1 (source sync) is complete, and Phase 4 (first build) is in
+progress. Signing keys are generated and `lunch lineage_miro-userdebug` works, but the first
+`m evolution` is **blocked at Soong analysis**: the OS3 vendor trees are incomplete (missing
+stock blobs, missing `qcwcn` namespace import, source-built duplicates). The fix is to
+regenerate `vendor/xiaomi/{miro,sm8750-common}` from the cached OS3 dump after reconciling
+`proprietary-files.txt`. Current phase and next action: see `PLAN.md` → "Current status".
