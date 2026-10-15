@@ -22,6 +22,7 @@ namespace_imports = [
     'device/xiaomi/miro',
     'device/xiaomi/sm8750-common',
     'hardware/qcom-caf/wlan',
+    'hardware/qcom-caf/wlan/qcwcn',
     'hardware/qcom-caf/sm8750',
     'hardware/xiaomi',
     'vendor/qcom/opensource/commonsys/display',
@@ -37,6 +38,10 @@ def lib_fixup_vendor_suffix(lib: str, partition: str, *args, **kwargs):
 
 lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
+
+    # libmdnssd is only visible to minadbd/adb in Soong; the Miracast system_ext
+    # blob links it at runtime from the platform. Drop the build-time dep.
+    'libmdnssd': lib_fixup_remove,
 
     (
         'vendor.qti.diaghal-V1-ndk',
