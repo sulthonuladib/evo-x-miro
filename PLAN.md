@@ -9,10 +9,11 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 5 (flash/boot) — **Phase 4 is complete.** Build 12
-  (`build-evolution14.log`, `EXIT_CODE=0`) produced a signed
-  `out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip`
-  (5,000,640,693 B, sha256 `e45e09f7…6f1064`). See `HANDOFF.md`.
+- **Active phase:** Phase 5 (flash/boot) — Phase 4 is complete (signed
+  `out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip`,
+  5,000,640,693 B, sha256 `e45e09f7…6f1064`). The device is now on the **stock
+  `OS3.0.302.0.WOMIDXM` baseline** (flashed cleanly; bootloader unlocked, `anti:1`, slot `a`,
+  `super` 11 GiB) and is **ready for our ROM**. See `HANDOFF.md` → "Phase 5 — flash/boot".
 - **Vendor-tree regeneration done (2026-10-15).** The OS3.0.302.0.WOMIDXM lists were
   reconciled and both trees regenerated; `m -j6 nothing` (product config + Soong analysis +
   install rules + ninja load) now succeeds. What changed vs Phase 3:
@@ -67,9 +68,10 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
   `/home/sulthonuladib/stock-roms/` if the vendor trees need regenerating again. `out/` is
   ~80 GB and `.repo/project-objects` was pruned to free space — **do not prune `.repo`
   git metadata during a build again** (it breaks the build-manifest rule, Failure 4).
-- **Next action:** Phase 5 — flash `recovery.img`/`boot.img`/etc. from
-  `out/target/product/miro/` and sideload the EvolutionX zip on the real `miro`; then triage
-  boot (logcat/dmesg/avc). See `HANDOFF.md` → "Next commands — Phase 5".
+- **Next action:** flash our ROM onto the stock-302 device (boot-family + disabled-verity
+  vbmeta → recovery → format data → `adb sideload EvolutionX-*.zip`; exact commands in
+  `HANDOFF.md` → "Phase 5"), then triage boot (logcat/dmesg/avc). Rollback: re-run the
+  extracted stock `flash_all.sh`.
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in

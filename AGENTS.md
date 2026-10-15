@@ -87,7 +87,10 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 Phases 0–3 are complete, Phase 1 (source sync) is complete, and **Phase 4 (first build) is
 done**: build 12 produced a signed, flashable
-`out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip` (see `PLAN.md` →
-"Current status" and `HANDOFF.md`). Phase 5 (flash/boot on the real `miro`) is next. A tail of
-10 QTI/stock-blob integration failures was fixed along the way; all fixes are local-only and
-listed in `HANDOFF.md` (carry/fork them before a fresh `repo sync`).
+`out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip`. All 10 build
+fixes are committed and pushed (device trees, vendor trees, and forks of
+`hardware/qcom-caf/{common,sm8750/dataipa}` + `device/qcom/sepolicy_vndr/sm8750`, which
+`manifest/miro.xml` now points at). **Phase 5 (flash/boot) is in progress**: the device is
+back on the stock `OS3.0.302.0.WOMIDXM` baseline (bootloader unlocked, `anti:1`, slot `a`,
+ready), and the next action is flashing our ROM (see `PLAN.md` → "Current status" and
+`HANDOFF.md` → "Phase 5 — flash/boot").

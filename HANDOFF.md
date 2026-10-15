@@ -16,11 +16,45 @@
 | OTA | A/B (`payload.bin` 5,000,632,401 B), post-SPL 2026-10-01 |
 | Run 12 | `build-evolution14.log`, `EXIT_CODE=0`, 16m06s (3910 steps) |
 
-**Next: Phase 5 (flash/boot).** Flashing images are in `out/target/product/miro/`
-(`recovery.img`, `boot.img`, `init_boot.img`, `vendor_boot.img`, `dtbo.img`, `vbmeta.img`,
-`vbmeta_system.img`). Use the fastboot + recovery-sideload flow in `docs/build-cnb.md` and
-the `android-fastboot` skill. The 10 failures from runs 1–11 and their local-only fixes are
-documented below.
+## Phase 5 — flash/boot (next; handed off here)
+
+**Device state (verified 2026-10-15 ~21:00):**
+- Stock **`OS3.0.302.0.WOMIDXM`** flashed cleanly via `flash_all.sh`; boots (`user`/`release-keys`, SPL `2026-08-01`, baseband `MPSS.DE.7.0-GLB-34ef8bead5`).
+- Bootloader **unlocked** (`flash.locked=0`, `verifiedbootstate=orange`, `vbmeta.device_state=unlocked`), `anti: 1`, slot `a`, `super` = 11 GiB (`/dev/block/sda33`), `/data` ~459 GB free.
+- Serial `a17469c8`; ADB authorized.
+
+**Artifacts ready:**
+- Our ROM zip: `/mnt/games/evo/out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip` (5,000,640,693 B, sha256 `e45e09f7…6f1064`).
+- Our boot-family images: `/mnt/games/evo/out/target/product/miro/{boot,init_boot,vendor_boot,dtbo,recovery,vbmeta,vbmeta_system}.img`.
+- Stock fastboot ROM (extracted, `gzip -t` verified): `/mnt/games/miro-files/miro_id_global_images_OS3.0.302.0.WOMIDXM_16.0/` (`flash_all.sh`, `flash_all_lock.sh`, `images/`).
+- Stock OTA fallback: `/home/sulthonuladib/stock-roms/miro_id_global-ota_full-OS3.0.302.0.WOMIDXM-user-16.0-e2b69f85e9.zip`; payload also at `/mnt/games/miro-ota/payload.bin`.
+
+**Exact next steps (flash our ROM):**
+```bash
+cd /mnt/games/evo/out/target/product/miro
+adb reboot bootloader
+fastboot devices && fastboot getvar unlocked && fastboot getvar anti && fastboot getvar current-slot
+fastboot flash boot boot.img
+fastboot flash init_boot init_boot.img
+fastboot flash vendor_boot vendor_boot.img
+fastboot flash dtbo dtbo.img
+fastboot flash recovery recovery.img
+fastboot --disable-verity --disable-verification flash vbmeta vbmeta.img
+fastboot --disable-verity --disable-verification flash vbmeta_system vbmeta_system.img
+fastboot reboot recovery            # or hold Power+VolUp
+# in recovery: Factory reset -> Format data/factory reset
+adb sideload /mnt/games/evo/out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip
+# if it doesn't boot: adb logcat / dmesg triage
+```
+
+**Rollback:** re-run `flash_all.sh` from the extracted stock ROM; `flash_all_lock.sh`
+(or `fastboot flashing lock`) **only** when fully stock (never lock with a custom ROM —
+hard brick; re-locking wipes data and needs the Mi-unlock wait to go custom again).
+
+**Notes:** stock is `user`, our ROM is `userdebug`; data wipe mandatory. Our images are
+AOSP-test-key signed → hence `--disable-verity --disable-verification` on vbmeta (bootloader
+unlocked, boots "orange"). Play Integrity will fail on the custom ROM. The 10 build
+failures/fixes from runs 1–11 are documented below; all are pushed to remotes.
 
 ## The build currently running
 
