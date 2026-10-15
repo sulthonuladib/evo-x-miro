@@ -114,15 +114,19 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 **Acceptance:** a new session can read `AGENTS.md` + `PLAN.md` and know the target, the base
 trees, and the next action. ✅
 
-## Phase 1 — Environment & source sync 🟡
+## Phase 1 — Environment & source sync ✅
 
-**In progress on this machine:** `repo` 2.65 installed to `~/.local/bin`; tree initialized at
-`/mnt/games/evo` with `repo init -u https://github.com/Evolution-X/manifest -b cnb
---partial-clone --clone-filter=blob:limit=10M --git-lfs`; `manifest/miro.xml` copied to
-`.repo/local_manifests/`. First sync left 4 projects to finish. `git-lfs` 3.8.0 in `~/.local/bin`.
+**Done on this machine (2026-10-15):** `repo` 2.65 + `git-lfs` 3.8.0 in `~/.local/bin`;
+tree initialized at `/mnt/games/evo` (`repo init -u https://github.com/Evolution-X/manifest
+-b cnb --partial-clone --clone-filter=blob:limit=10M --git-lfs`); `manifest/miro.xml` in
+`.repo/local_manifests/`; `repo sync` completed successfully (the 4 previously-failed projects
+— `system/unwinding`, `external/perfmark`, `external/python/cpython3`, `external/skia` — are
+all checked out). Host packages present: `gnupg` 2.4.9 (`gpg`), `gperf`, `schedtool`. Signing
+keys generated at `vendor/evolution-priv/keys` (template `keys.sh`, ~179 files incl.
+`avb_custom_key.bin`).
 
-**Remaining inputs:** signing keys (`vendor/evolution-priv/keys`); host packages
-`gnupg gperf schedtool`.
+**Remaining inputs:** none for the build; the signing keys still need to be backed up
+off-machine.
 
 **Inputs:** build host; GitHub org.
 
