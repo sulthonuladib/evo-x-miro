@@ -1535,7 +1535,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/miro/proprietary/vendor/etc/IPACM_cfg.xml:$(TARGET_COPY_OUT_VENDOR)/etc/IPACM_cfg.xml \
     vendor/xiaomi/miro/proprietary/vendor/etc/ITVDD.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ITVDD.txt \
     vendor/xiaomi/miro/proprietary/vendor/etc/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
-    vendor/xiaomi/miro/proprietary/vendor/etc/aconfig_flags.pb:$(TARGET_COPY_OUT_VENDOR)/etc/aconfig_flags.pb \
     vendor/xiaomi/miro/proprietary/vendor/etc/aidl/hfp/hfp_codec_capabilities.xml:$(TARGET_COPY_OUT_VENDOR)/etc/aidl/hfp/hfp_codec_capabilities.xml \
     vendor/xiaomi/miro/proprietary/vendor/etc/aidl/le_audio/aidl_audio_set_configurations.bfbs:$(TARGET_COPY_OUT_VENDOR)/etc/aidl/le_audio/aidl_audio_set_configurations.bfbs \
     vendor/xiaomi/miro/proprietary/vendor/etc/aidl/le_audio/aidl_audio_set_configurations.json:$(TARGET_COPY_OUT_VENDOR)/etc/aidl/le_audio/aidl_audio_set_configurations.json \
@@ -1684,7 +1683,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/miro/proprietary/vendor/etc/init/vndservicemanager.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vndservicemanager.rc \
     vendor/xiaomi/miro/proprietary/vendor/etc/init/wlanramdumpcollector.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/wlanramdumpcollector.rc \
     vendor/xiaomi/miro/proprietary/vendor/etc/input-port-associations.xml:$(TARGET_COPY_OUT_VENDOR)/etc/input-port-associations.xml \
-    vendor/xiaomi/miro/proprietary/vendor/etc/linker.config.pb:$(TARGET_COPY_OUT_VENDOR)/etc/linker.config.pb \
     vendor/xiaomi/miro/proprietary/vendor/etc/media_codecs_c2_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_c2_audio.xml \
     vendor/xiaomi/miro/proprietary/vendor/etc/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
     vendor/xiaomi/miro/proprietary/vendor/etc/media_codecs_google_c2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2.xml \
@@ -1734,46 +1732,16 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     graphicbuffersource-aidl-ndk \
-    libmedia_codeclist \
-    libstagefright_codecbase \
-    libstagefright_framecapture_utils \
-    libstagefright_graphicbuffersource_aidl \
-    libstagefright_surface_utils \
-    android.hardware.bluetooth.audio-impl \
+    android.hardware.vibrator-V1-ndk_platform \
     com.android.ozoaudio.notify-V1-ndk \
-    com.dsi.ant@1.0 \
     com.fingerprints.extension3-V1-ndk \
-    framework-permission-aidl-cpp \
     ftm_fm_lib \
-    android.hardware.bluetooth.audio@2.0-impl \
-    android.hardware.renderscript@1.0-impl \
-    audio.bluetooth.default \
     audio.bluetooth_qti.default \
-    audio.primary.default \
-    audio.r_submix.default \
-    audio.usb.default \
-    gralloc.default \
-    libsoundtriggerhal.qti \
-    local_time.default \
-    power.default \
-    vibrator.default \
     libDcfHalFramework \
     libDcfHalLogger \
-    libOmxCore \
     libSEGModel \
     libSNPESample \
     libTxPwrJni \
-    lib_android_keymaster_keymint_utils \
-    lib_bt_aptx \
-    lib_bt_ble \
-    lib_bt_bundle \
-    libaconfig_storage_read_api_cc \
-    libalsautils \
-    libalsautilsv2 \
-    libandroid_runtime_lazy \
-    libaudio_aidl_conversion_common_ndk \
-    libaudioaidlcommon \
-    libaudiochargerlistener \
     libav_ozoencoder \
     libbaa_BasedOnCC_VolDown \
     libbaa_ChargeInfo \
@@ -1783,58 +1751,26 @@ PRODUCT_PACKAGES += \
     libbaa_LowSohFvDown \
     libbaa_common \
     libbase64 \
-    libbatterylistener \
-    libbinderdebug \
-    libbluetooth_audio_session \
-    libbluetooth_audio_session_aidl \
     libboot_control_qti \
-    libcamera2ndk_vendor \
     libcameraobserver \
     libcameraopt \
     libcert_parse.wpa_s \
-    libcodec2_aidl \
-    libcodec2_hal_common \
-    libcodec2_hidl@1.1 \
-    libcodec2_hidl@1.2 \
-    libcodec2_hidl_plugin \
-    libcodec2_soft_common \
-    libcppbor \
-    libcppbor_external \
-    libcppcose_rkp \
     libcrypto_data \
-    libcustomva_intf \
     libdiagjni \
     libdmap_consent_sdk \
     libdpp_manager \
     libfastcrc \
     libfdmonitor \
-    libflatbuffers-cpp \
-    libfmpal \
     libhalide_hexagon_host \
-    libhfp_pal \
-    libhidparser \
-    libhotword_intf \
     libhwfenceclient \
-    libimage_io \
-    libipanat \
     libjni_imageutil \
-    libjpegdecoder \
-    libjpegencoder \
-    libjson \
-    libkeystore-engine-wifi-hidl \
-    libkeystore-wifi-hidl \
     libloadtrusteduiapp \
     libmapdata_api \
-    libmediautils_vendor \
     libmialgo \
     libminkipcbinder_vendor \
     libmiracast \
-    libmm-omxcore \
-    libnetfilter_conntrack \
-    libnfnetlink \
     liboem_specific \
     liboemaids_vendor \
-    liboffloadhal \
     libopencl_loader \
     libopencv_core \
     libopencv_core_se \
@@ -1844,10 +1780,7 @@ PRODUCT_PACKAGES += \
     libozoaudioutils \
     libozocapability \
     libozotensorflowlite_c \
-    libpasn \
-    libplatformconfig \
     libpolygon \
-    libpsi \
     libqape_oem_ext \
     libqms_optimized_route_mgr_sdk \
     libqms_packetstats_sdk \
@@ -1856,8 +1789,6 @@ PRODUCT_PACKAGES += \
     libqsh_wifi_test \
     libqtbase \
     libqti-MemHal-client \
-    libqti_vndfwk_detect \
-    libqti_vndfwk_detect_vendor \
     libqtjsonhelper \
     libqtnodes \
     libqttestclient \
@@ -1871,39 +1802,17 @@ PRODUCT_PACKAGES += \
     librecovery_updater \
     librecovery_updater_msm \
     libreffeature \
-    librmnetctl \
-    libruy \
     libsamplefilterplugin \
     libsbprovision \
     libsensinghubapi \
     libsensinghubsession \
-    libsensorndkbridge \
-    libsfplugin_ccodec_utils \
-    libsgutils2 \
-    libsndcardparser \
-    libsoft_attestation_cert \
-    libstagefright_aidl_bufferpool2 \
-    libstagefright_bufferpool@2.0.1 \
-    libstagefrighthw \
     libstreamprocessor \
     libsxrservice_client.qti \
-    libtensorflowlite_c \
-    libtflite \
-    libtinyalsav2 \
     libtracker_6dof_impl \
-    libultrahdr \
-    libvibratorutils \
     libvideorecovery_vendor \
     libvideoserviceclientimpl_vendor \
     libvideoserviceutils \
-    libvndfwk_detect_jni.qti \
-    libvndfwk_detect_jni.qti_vendor \
     libvpptestutils \
-    libvui_intf \
-    libwifi-hal-ctrl \
-    libwifi-hal-qcom \
-    libwifi-hal \
-    libwpa_client \
     libxrcommconnection \
     libxrcommcoreutils \
     libxrcommdiscoveryservice \
@@ -1922,9 +1831,6 @@ PRODUCT_PACKAGES += \
     libxrcommwirelesslinkconfigservice \
     libxrcommwirelesslinkconfigservice_client \
     libxrcommwpacliwrapper \
-    libclearkeycasplugin \
-    libdrmclearkeyplugin \
-    qti-audio-types-aidl-V1-ndk \
     libVppAisQnnHtp \
     libVppFrcQnnHtp \
     libdpp_engine_skel \
@@ -1945,73 +1851,22 @@ PRODUCT_PACKAGES += \
     libvpp_vqa_networks \
     libvpt_action_recognition \
     libworker_pool \
-    server_configurable_flags \
-    libhapticgenerator \
     vendor.display.color@1.6 \
     vendor.display.color@1.7 \
-    vendor.display.config@1.10 \
-    vendor.display.config@1.11 \
-    vendor.display.config@1.6 \
-    vendor.display.config@1.7 \
-    vendor.display.config@1.8 \
-    vendor.display.config@1.9 \
     vendor.hardware.vibratorfeature.IVibratorExt-V1-ndk_platform \
     vendor.qti.MemHal-V1-ndk \
     vendor.qti.hardware.agm-V1-ndk \
     vendor.qti.hardware.automotive.vehicle@1.0 \
-    vendor.qti.hardware.bluetooth.audio-V1-ndk \
-    vendor.qti.hardware.bluetooth_audio@2.0 \
-    vendor.qti.hardware.bluetooth_audio@2.1 \
     vendor.qti.hardware.c2pa-V1-ndk \
-    vendor.qti.hardware.camera.aon-V1-ndk \
-    vendor.qti.hardware.camera.aon-V2-ndk \
-    vendor.qti.hardware.camera.offlinecamera-V1-ndk \
-    vendor.qti.hardware.camera.offlinecamera-V2-ndk \
-    vendor.qti.hardware.display.aiqe-V2-ndk \
-    vendor.qti.hardware.display.allocator@1.0 \
-    vendor.qti.hardware.display.allocator@3.0 \
-    vendor.qti.hardware.display.allocator@4.0 \
-    vendor.qti.hardware.display.color-V1-ndk \
-    vendor.qti.hardware.display.composer3-V1-ndk \
-    vendor.qti.hardware.display.composer@1.0 \
-    vendor.qti.hardware.display.composer@2.0 \
-    vendor.qti.hardware.display.config-V1-ndk \
-    vendor.qti.hardware.display.config-V10-ndk \
-    vendor.qti.hardware.display.config-V11-ndk \
-    vendor.qti.hardware.display.config-V12-ndk \
-    vendor.qti.hardware.display.config-V2-ndk \
-    vendor.qti.hardware.display.config-V3-ndk \
-    vendor.qti.hardware.display.config-V4-ndk \
-    vendor.qti.hardware.display.config-V5-ndk \
-    vendor.qti.hardware.display.config-V6-ndk \
-    vendor.qti.hardware.display.config-V7-ndk \
-    vendor.qti.hardware.display.config-V8-ndk \
-    vendor.qti.hardware.display.config-V9-ndk \
-    vendor.qti.hardware.display.demura-V1-ndk \
-    vendor.qti.hardware.display.mapper@1.0 \
-    vendor.qti.hardware.display.mapper@1.1 \
-    vendor.qti.hardware.display.mapper@2.0 \
-    vendor.qti.hardware.display.mapper@3.0 \
-    vendor.qti.hardware.display.mapper@4.0 \
-    vendor.qti.hardware.display.mapperextensions@1.0 \
-    vendor.qti.hardware.display.mapperextensions@1.1 \
-    vendor.qti.hardware.display.mapperextensions@1.2 \
-    vendor.qti.hardware.display.mapperextensions@1.3 \
-    vendor.qti.hardware.display.postproc-V1-ndk \
     vendor.qti.hardware.minkipcbinder-V1-ndk \
     vendor.qti.hardware.pal-V1-ndk \
-    vendor.qti.hardware.qspa-V1-ndk \
-    vendor.qti.hardware.servicetracker@1.0 \
-    vendor.qti.hardware.servicetracker@1.1 \
-    vendor.qti.hardware.servicetrackeraidl-V1-ndk \
     vendor.qti.hardware.sigma_miracast_aidl-V1-ndk \
-    vendor.qti.hardware.systemhelper@1.0 \
-    vendor.qti.hardware.systemhelperaidl-V1-ndk \
-    vendor.qti.hardware.wifi.supplicant-V1-ndk \
+    vendor.qti.hardware.trustedui@1.0 \
     vendor.qti.hardware.wifi.wifilearner-V1-ndk \
     vendor.xiaomi.aidl.minet-V1-ndk \
     vendor.xiaomi.aidl.miwill-V1-ndk \
     vendor.xiaomi.aidl.miwill@1.0-impl \
+    vendor.xiaomi.cit.wifi-V2-ndk \
     vendor.xiaomi.hardware.aek-V1-ndk \
     vendor.xiaomi.hardware.aidl.intentaware-V1-ndk_platform \
     vendor.xiaomi.hardware.aon-V1-ndk \
@@ -2025,18 +1880,20 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hardware.camera.synthetic-impl \
     vendor.xiaomi.hardware.cld_aidl-V1-ndk \
     vendor.xiaomi.hardware.fbo-V1-ndk \
+    vendor.xiaomi.hardware.fingerprintextension-V1-ndk \
+    vendor.xiaomi.hardware.mikeybag-V1-ndk \
     vendor.xiaomi.hardware.mimd2-V1-ndk \
     vendor.xiaomi.hardware.miperf2-V1-ndk \
     vendor.xiaomi.hardware.misys.common-V3-ndk \
     vendor.xiaomi.hardware.otrpagent2-V1-ndk \
     vendor.xiaomi.hardware.swap-V1-ndk \
+    vendor.xiaomi.hardware.videoservice-V6-ndk \
+    vendor.xiaomi.hardware.vsimapp-V1-ndk \
     vendor.xiaomi.hardware.wifi.hardware-V1-ndk \
     vendor.xiaomi.hardware.wifi.hostapd-V1-ndk \
     vendor.xiaomi.hardware.wifi.supplicant-V1-ndk \
     vendor.xiaomi.modem.qms-V1-ndk \
     vendor.xiaomi.sensor.camera-V1-ndk \
-    wifi_legacy \
-    xiaomi.system.hypsys.common-V1-ndk \
     vendor_lib_rfsa_adsp_activity_napp_header \
     vendor_lib_rfsa_adsp_activity_so \
     vendor_lib_rfsa_adsp_chre_qsh_shim_so \
@@ -2062,7 +1919,6 @@ PRODUCT_PACKAGES += \
     com.quicinc.cne.server@2.1 \
     com.quicinc.cne.server@2.2 \
     vendor.qti.hardware.sigma_miracast@1.0-impl \
-    libdisplayconfig.system.qti \
     libdolbyeffect \
     libdpmframework \
     libmiracastsystem \
@@ -2096,7 +1952,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.data.factory@2.7 \
     vendor.qti.data.factory@2.8 \
     vendor.qti.hardware.alarm@1.0 \
-    vendor.qti.hardware.capabilityconfigstore@1.0 \
     vendor.qti.hardware.cvp@1.0 \
     vendor.qti.hardware.data.cne.internal.api@1.0 \
     vendor.qti.hardware.data.cne.internal.constants@1.0 \
@@ -2108,8 +1963,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.data.iwlan@1.1 \
     vendor.qti.hardware.data.iwlandata-V1-ndk \
     vendor.qti.hardware.data.qmi@1.0 \
-    vendor.qti.hardware.display.composer@3.0 \
-    vendor.qti.hardware.display.composer@3.1 \
     vendor.qti.hardware.dpmservice@1.0 \
     vendor.qti.hardware.dpmservice@1.1 \
     vendor.qti.hardware.embmssl@1.0 \
@@ -2117,7 +1970,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.limits@1.0 \
     vendor.qti.hardware.limits@1.1 \
     vendor.qti.hardware.mwqemadapter@1.0 \
-    vendor.qti.hardware.perf@2.3 \
     vendor.qti.hardware.qccsyshal@1.0 \
     vendor.qti.hardware.qccsyshal@1.1 \
     vendor.qti.hardware.qccsyshal@1.2-halimpl \
@@ -2149,7 +2001,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.ims.rcsuce@1.2 \
     vendor.qti.latency@2.3 \
     vendor.qti.qspmhal@1.0 \
-    vendor.xiaomi.hardware.fingerprintextension@1.0 \
     com.qti.actuator.miro_ofilm_s5kjn5_gt9764v_tele3x_i_actuator \
     com.qti.actuator.miro_sunny_ovx8000_gt9764v_wide_i_actuator \
     com.qti.eeprom.miro_aac_s5kkd1_gt24p64e_front_i_eeprom \
@@ -2350,16 +2201,29 @@ PRODUCT_PACKAGES += \
     camx.device-impl \
     camx.provider-impl \
     com.qti.camx.chiiqutils \
+    com.qti.chifeaturecompatibility \
+    com.qti.qseeaon \
+    com.qti.qseeutils \
+    com.qti.stats.common \
+    com.xiaomi.camdfx \
     com.xiaomi.camhal.submodel.camxfrag \
+    com.xiaomi.immunesystem.bigdata \
+    com.xiaomi.immunesystem.client \
     com.xiaomi.immunesystem.hook.camx \
     ese_weaver \
+    camera.qcom.sm8750 \
     camera.qcom \
     com.qti.chi.override \
     fingerprint.goodix_us \
     fingerprint.qcom_us \
+    libAF \
     libAncHumanPreviewBokeh \
+    libDlhookDumpStates \
+    libFS \
+    libITT \
     libIntelligentFocus \
     libMiEmojiEffect \
+    libMiPhotoFilter \
     libMiStereoFactoryCalibAnalyzeBin_qual \
     libSNPE \
     libSnpeHta \
@@ -2384,11 +2248,11 @@ PRODUCT_PACKAGES += \
     libarcsoft_turbo_hdr_raw \
     libarcsoft_turbo_hdr_raw_portrait \
     libauthsecret_empty-nxp \
-    libbarrage \
     libbitmlengine \
     libbitmlenginev2 \
     libcamera_scene \
     libcameraheif \
+    libcamlog \
     libcamxcommonutils \
     libcamxcoreutils \
     libcamxcsl \
@@ -2409,16 +2273,36 @@ PRODUCT_PACKAGES += \
     libcamxswprocessalgo \
     libcamxtintlessalgo \
     libcamxvppservicebase \
+    libchilog \
+    libchinodeevautils \
+    libchinodehmeutils \
+    libcom.qti.chinodeutils \
+    libcom.xiaomi.attribute \
+    libcom.xiaomi.debug \
+    libcom.xiaomi.ecoenginemonitor \
+    libcom.xiaomi.eventcallback \
+    libcom.xiaomi.grallocutils \
+    libcom.xiaomi.ionutils \
+    libcom.xiaomi.mawutilsold \
+    libcom.xiaomi.metadatautils \
+    libcom.xiaomi.pluginutils \
+    libcom.xiaomi.qimagebuffer \
+    libcom.xiaomi.sensorpolicy \
+    libcom.xiaomi.signaltrigger \
+    libcommonchiutils \
     libdlrmsc_android15 \
     libellv \
-    libfcmintf \
+    libfastmessage \
     libfcsam \
-    libframecapturemanager \
-    libframemaster \
-    libframemasterintf \
     libgf_hal \
     libhandgesture.arcsoft \
+    libhdr10plus \
+    libheichal \
     libhta_hexagon_runtime_snpe \
+    libhwliqinterface2 \
+    libhwlispcffdump \
+    libiqdbgmgr \
+    libisphwsetting \
     libjc_keymint-nxp \
     libjc_keymint_transport_nxp \
     libkeymint_empty-nxp \
@@ -2432,6 +2316,8 @@ PRODUCT_PACKAGES += \
     libmiaio_aio_seg \
     libmiaio_det_sceneseg \
     libmiaio_head_seg \
+    libmialgo_ai_vision \
+    libmialgo_aihighlight \
     libmialgo_aio_seg \
     libmialgo_aisp \
     libmialgo_bokeh_depth \
@@ -2443,7 +2329,9 @@ PRODUCT_PACKAGES += \
     libmialgo_sd \
     libmialgo_sdsr \
     libmialgo_utils \
+    libmialgoengine \
     libmiam \
+    libmicamGlobalPool \
     libmicamera_adapter \
     libmicamera_aidl_device \
     libmicamera_aidl_provider \
@@ -2453,6 +2341,7 @@ PRODUCT_PACKAGES += \
     libmicamera_hal_policy \
     libmicertkey \
     libmiface \
+    libminikin.xiaomi \
     libmiocr \
     libmiopencv \
     libmiphone_capture_bokeh \
@@ -2468,23 +2357,35 @@ PRODUCT_PACKAGES += \
     libmmcamera_mfnr_t4 \
     libmmcamera_pdpc \
     libmorpho_Depurple \
+    libmpbase \
     libmseccam \
-    libnvticcontroller \
     libnvttouchmv \
     libocr_api \
+    libofflinedebugdata \
+    libois_channel_stub \
+    liboischannel \
+    libopencv \
+    libopencv3a \
     libportrait_repair_qnn \
+    libpostprocinfo \
+    libproj_qmot_tracker \
+    libproj_sot \
     libqsegnet \
     libqshcamera \
     libremosaic_wrapper \
     libremosaiclib_s5kjn5 \
     libremosaiclib_s5kkd1 \
     librfs_warp \
+    libshadowhook \
+    libsiminputgenutil \
+    libsimulation \
     libsnpe_config \
     libteecli \
     libtfacal \
     libtical \
     libtouchreport_alg_2 \
     libtouchreport_alg_fts \
+    libvega_common \
     libvsim \
     libwa_widelens_undistort \
     libweaver_empty-nxp \
@@ -2496,14 +2397,18 @@ PRODUCT_PACKAGES += \
     libbitml_nsp_skel \
     libhdr_skel \
     libqsegnetengine_dsp_skel \
-    vendor.novatek.hardware.visdisplaysrv-V1-ndk \
+    vendor.qti.hardware.camera.aon-service-impl \
     vendor.qti.qvirt-V1-ndk \
-    vendor.xiaomi.hardware.framecapturemanager-V1-ndk \
-    vendor.xiaomi.hardware.framemaster-V1-ndk \
+    vendor.xiaomi.hardware.aidlbgservice-V1-impl \
+    vendor.xiaomi.hardware.aidlbgservice-V1-ndk \
+    vendor.xiaomi.hardware.bgservice@1.0-impl \
+    vendor.xiaomi.hardware.bgservice@1.0 \
     vendor.xiaomi.hardware.micrtk-V1-ndk_platform \
     vendor.xiaomi.hardware.mikeybag-impl \
+    vendor.xiaomi.hardware.misauth-V1-ndk \
     vendor.xiaomi.hardware.misecmedia-V1-ndk \
     vendor.xiaomi.hardware.mitrustedui-V2-ndk \
+    vendor.xiaomi.hardware.mrm-V1-ndk \
     vendor.xiaomi.hardware.otrpagent@2.0-impl \
     vendor.xiaomi.hardware.seccam-V1-ndk \
     odm_lib_rfsa_adsp_libCalculator_skel_so \
@@ -2525,27 +2430,17 @@ PRODUCT_PACKAGES += \
     odm_lib_rfsa_adsp_libmialgo_tracker_cdsp_skel_so \
     odm_lib_rfsa_adsp_libmialgo_tsspot_cdsp_skel_so \
     odm_lib_rfsa_adsp_libmlawbpostproc_dsp_skel_so \
-    com.android.hardware.cas \
     ConnectionSecurityService \
     TxPwrAdmin \
     WfdService \
     GFDelmarSetting \
     QfsFactoryTest \
-    android.hardware.drm-service.clearkey.xml \
     android.hardware.health-service.qti.xml \
-    android.hardware.ir-service.example.xml \
-    android.hardware.sensors-multihal.xml \
     android.hardware.thermal-service.qti.xml \
     android.hardware.usb-service.qti.xml \
     android.hardware.usb.gadget-service.qti.xml \
-    android.hardware.wifi-service.xml \
-    android.hardware.wifi.hostapd.xml \
-    android.hardware.wifi.supplicant.xml \
-    audioeffectservice_qti.xml \
-    boot-service.qti.xml \
     cacert-saidl.xml \
     fm_hci.xml \
-    manifest_audiocorehal_default.xml \
     manifest_blackbox.xml \
     manifest_btaudiocoreservices_qti.xml \
     manifest_vendor.xiaomi.hardware.cld_aidl.xml \
@@ -2572,7 +2467,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.sigma_miracast.xml \
     vendor.qti.hardware.sigma_miracast_aidl.xml \
     vendor.qti.qesdsys.service.xml \
-    AHBF-V3-service.xml \
     android.hardware.biometrics.face-v4.xml \
     android.hardware.security.keymint-service.strongbox.xml \
     android.hardware.security.sharedsecret-service.strongbox.xml \
@@ -2614,17 +2508,11 @@ PRODUCT_PACKAGES += \
     agmvoiceui \
     ar_util_in_test_example \
     athdiag \
-    audioadsprpcd \
     bootmode \
-    boringssl_self_test64 \
     ccid_daemon_nr \
-    checkpoint_gc \
     cnss_cli \
     cnss_diag \
     color \
-    color_sampling_test \
-    color_sampling_tool \
-    cplay \
     csaudiotransfer_test \
     ctlogger \
     ctrlapp_dut \
@@ -2639,7 +2527,6 @@ PRODUCT_PACKAGES += \
     dlsc \
     dppdaemon \
     drm_sample_app \
-    dumpsys \
     e_loop \
     fan_service \
     feature_enabler_client \
@@ -2652,22 +2539,10 @@ PRODUCT_PACKAGES += \
     getfattr \
     getopt \
     hal_proxy_daemon \
-    hostapd_cli \
-    android.hardware.boot-service.qti \
-    android.hardware.drm-service.clearkey \
-    android.hardware.health-service.qti \
-    android.hardware.ir-service.example \
     android.hardware.keymaster@4.0-service-qti \
-    android.hardware.sensors-service.multihal \
-    android.hardware.thermal-service.qti \
-    android.hardware.usb-service.qti \
-    android.hardware.usb.gadget-service.qti \
-    android.hardware.wifi-service \
-    hostapd \
     qvrservice \
     vendor.ozoaudio.notify@1.0-service \
     vendor.qti.MemHal-service \
-    vendor.qti.hardware.memtrack-service \
     vendor.qti.hardware.minkipcbinder@1.0-service \
     vendor.xiaomi.aidl.minet@1.0-service \
     vendor.xiaomi.aidl.miwill@1.0-service \
@@ -2682,15 +2557,12 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hardware.swap-service \
     vendor.xiaomi.hardware.videoservice-service \
     vendor.xiaomi.modem.qms@1.0-service \
-    wpa_supplicant \
     hypsys_vendor \
     ioprofiler \
-    ipacm \
     ipacm-diag \
     iperf3.zc \
     ipp_key_gen \
     ipp_test \
-    iw \
     mbnota \
     mcs_test \
     mi_ambient \
@@ -2714,7 +2586,6 @@ PRODUCT_PACKAGES += \
     qwes_cli \
     rpmbClient \
     setfattr \
-    sg_write_buffer \
     show_reserved_mem \
     sigma_dut \
     smcinvoke_example \
@@ -2723,7 +2594,6 @@ PRODUCT_PACKAGES += \
     spectraltool \
     ssgqmigd \
     sxrservicetest \
-    tcpdump \
     test_diag \
     ubwcp_test64 \
     ufs_utils \
@@ -2736,7 +2606,6 @@ PRODUCT_PACKAGES += \
     wdsdaemon \
     wifilearner \
     wlanramdumpcollector \
-    wpa_cli \
     xiaomi_cellinfo_test \
     xiaomi_extend_cmd \
     dpmd \
@@ -2762,7 +2631,6 @@ PRODUCT_PACKAGES += \
     nvt_test_hal \
     tee-supplicant \
     test-aon \
-    test-nusensors \
     touch_report_debug \
     vendor.xiaomi.hardware.mikeybag-service \
     vendor.xiaomi.hardware.mitrustedui-service \

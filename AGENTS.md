@@ -85,9 +85,9 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Phases 0–2 are complete, Phase 1 (source sync) is complete, and Phase 4 (first build) is in
-progress. Signing keys are generated and `lunch lineage_miro-userdebug` works, but the first
-`m evolution` is **blocked at Soong analysis**: the OS3 vendor trees are incomplete (missing
-stock blobs, missing `qcwcn` namespace import, source-built duplicates). The fix is to
-regenerate `vendor/xiaomi/{miro,sm8750-common}` from the cached OS3 dump after reconciling
-`proprietary-files.txt`. Current phase and next action: see `PLAN.md` → "Current status".
+Phases 0–3 are complete, Phase 1 (source sync) is complete, and **Phase 4 (first build) is
+done**: build 12 produced a signed, flashable
+`out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip` (see `PLAN.md` →
+"Current status" and `HANDOFF.md`). Phase 5 (flash/boot on the real `miro`) is next. A tail of
+10 QTI/stock-blob integration failures was fixed along the way; all fixes are local-only and
+listed in `HANDOFF.md` (carry/fork them before a fresh `repo sync`).

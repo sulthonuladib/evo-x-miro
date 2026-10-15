@@ -605,7 +605,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.diaghal-V1-ndk \
     android.hardware.audio.core.sounddose-V2-ndk_xiaomi \
     android.hardware.bluetooth.audio-impl_xiaomi \
-    android.media.audio.common.types-V6-ndk \
+    android.media.audio.common.types-V6-ndk_xiaomi \
     btaudio_offload_if \
     com.qualcomm.qti.dpm.api@1.0 \
     com.qualcomm.qti.imscmservice@1.0 \
@@ -1405,6 +1405,8 @@ PRODUCT_PACKAGES += \
     lib-imsvtextutils \
     lib-imsvtutils \
     libdiag_system \
+    libfcmintf \
+    libframemasterintf \
     libimscamera_jni \
     libimsmedia_jni \
     vendor.qti.ImsRtpService-V1-ndk \
@@ -1413,6 +1415,8 @@ PRODUCT_PACKAGES += \
     vendor.qti.ims.datachannelservice-V1-ndk \
     vendor.qti.imsrtpservice@3.0 \
     vendor.qti.imsrtpservice@3.1 \
+    vendor.xiaomi.hardware.framecapturemanager-V1-ndk \
+    vendor.xiaomi.hardware.framemaster-V1-ndk \
     consumerir.qcom \
     displayfeature.default \
     fingerprint.qcom_us.default \
@@ -1436,6 +1440,7 @@ PRODUCT_PACKAGES += \
     libadaptivehdr \
     libagmdevice \
     libaudioroute_ext \
+    libbarrage \
     libc++_shared \
     libclient2slpi.notifier \
     libcolortempmode \
@@ -1446,6 +1451,8 @@ PRODUCT_PACKAGES += \
     libeyecare \
     libflatmode \
     libfpsmonitor \
+    libframecapturemanager \
+    libframemaster \
     libhistprocess \
     libidprovision \
     libmfido \
@@ -1458,6 +1465,7 @@ PRODUCT_PACKAGES += \
     libmieventnodewatch \
     libmlipay \
     libmt \
+    libnvticcontroller \
     libpaperMode \
     libqc_hal \
     librhytheyecare \
@@ -1475,6 +1483,7 @@ PRODUCT_PACKAGES += \
     libwvkeybox \
     nfc_nci.st21nfc.st \
     sensors.touch.detect \
+    vendor.novatek.hardware.visdisplaysrv-V1-ndk \
     vendor.qti.gnss-V7-ndk \
     vendor.qti.gnss-service \
     vendor.xiaomi.hardware.idmanager-V1-ndk \

@@ -1691,7 +1691,9 @@ odm/etc/touch/dynamicrate.json
 odm/etc/touch/gameturbotool-control.json
 odm/etc/touch/gameturbotool-fastinput.json
 odm/etc/touch/gameturbotool.json
-odm/etc/vintf/manifest/AHBF-V3-service.xml
+# odm/etc/vintf/manifest/AHBF-V3-service.xml  # miro: stock ODM manifest for a
+# service we do not ship; conflicts with the source fingerprint HAL vintf_fragment
+# (IFingerprint/default @4). Do NOT re-add.
 odm/etc/vintf/manifest/manifest_vendor.xiaomi.hardware.otrpagent@2.0.xml
 odm/etc/vintf/manifest/manifest_vendor.xiaomi.hardware.vsimapp.xml
 odm/etc/vintf/manifest/micrtk.xml
@@ -2026,7 +2028,9 @@ vendor/etc/vintf/manifest_sun.xml
 vendor/etc/HapticsPolicy.xml
 vendor/etc/IPACM_Filter_cfg.xml
 vendor/etc/ITVDD.txt
-vendor/etc/aconfig_flags.pb
+# vendor/etc/aconfig_flags.pb  # miro: generated at build time; the stock OS3
+# blob is an A16 flag cache and AOSP17 aconfig rejects it
+# (read-only flag with non-NONE storage backend). Do NOT re-add.
 vendor/etc/ambient_para.conf
 vendor/etc/audio_cloud_control_white_list.xml
 vendor/etc/boringssl_self_test.no_zygote.rc

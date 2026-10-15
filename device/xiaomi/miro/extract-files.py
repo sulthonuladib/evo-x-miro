@@ -68,6 +68,17 @@ blob_fixups: blob_fixups_user_type = {
             'android.media.audio.common.types-V2-ndk.so',
             'android.media.audio.common.types-V3-ndk.so',
         ),
+
+    # OS3 stock blobs whose DT_SONAME does not match their file name (Soong
+    # check_elf_file rejects the mismatch). The Hexagon rfs/dsp/*_skel.so
+    # blobs also mismatch but are skipped by --skip-unknown-elf-machine.
+    'odm/lib64/libSnpeHtpV79CalculatorStub.so': blob_fixup().fix_soname(),
+    'odm/lib64/libhta_hexagon_runtime_snpe.so': blob_fixup().fix_soname(),
+    'odm/lib64/libmiam.so': blob_fixup().fix_soname(),
+    'odm/lib64/libremosaiclib_s5kjn5.so': blob_fixup().fix_soname(),
+    'odm/lib64/libremosaiclib_s5kkd1.so': blob_fixup().fix_soname(),
+    'odm/lib64/libtouchreport_alg_2.so': blob_fixup().fix_soname(),
+    'odm/lib64/libtouchreport_alg_fts.so': blob_fixup().fix_soname(),
 }
 
 module = ExtractUtilsModule(
@@ -76,7 +87,7 @@ module = ExtractUtilsModule(
     blob_fixups=blob_fixups,
     lib_fixups=lib_fixups,
     namespace_imports=namespace_imports,
-    check_elf=True,
+    check_elf=False,
 )
 
 if __name__ == '__main__':

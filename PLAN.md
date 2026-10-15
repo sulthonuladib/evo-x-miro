@@ -9,10 +9,10 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 4 (first build) — **the vendor trees are regenerated and the first
-  `m -j6 evolution` is compiling** (started 2026-10-15 ~09:16, log
-  `/mnt/games/evo/build-evolution2.log`). Phases 0–3 are done and Phase 1 (source sync) is
-  complete.
+- **Active phase:** Phase 5 (flash/boot) — **Phase 4 is complete.** Build 12
+  (`build-evolution14.log`, `EXIT_CODE=0`) produced a signed
+  `out/target/product/miro/EvolutionX-17.0-20261015-miro-12.3-Unofficial.zip`
+  (5,000,640,693 B, sha256 `e45e09f7…6f1064`). See `HANDOFF.md`.
 - **Vendor-tree regeneration done (2026-10-15).** The OS3.0.302.0.WOMIDXM lists were
   reconciled and both trees regenerated; `m -j6 nothing` (product config + Soong analysis +
   install rules + ninja load) now succeeds. What changed vs Phase 3:
@@ -40,12 +40,36 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
   (`device/xiaomi/sm8750-common`, gitignored) and in the build tree's checkout of the
   upstream `Crisp-los` repo (uncommitted there). Fork/patch that repo before any fresh
   `repo sync` or the fixes are lost.
+- **Build 1–10 fixes:** (1) QTI sepolicy `genfscon .../qcom-battery` conflict commented out;
+  (2) boot-jar order fixed by moving `telephony-ext xiaomi-telephony-stub` to the end of the
+  device product; (3) `libipanat` missing `<linux/msm_ipa.h>` fixed by a new
+  `qti_ipa_kernel_headers_local` header lib in
+  `hardware/qcom-caf/sm8750/dataipa/drivers/platform/msm/Android.bp` re-exported from
+  `hardware/qcom-caf/common/Android.bp`'s `qti_ipa_kernel_headers`; (4) `build-manifest.xml`
+  `repo manifest -r` broke after `.repo` git metadata was pruned — dropped `-r` in
+  `vendor/lineage/build/tasks/build-manifest_xml.mk`; (5) stock vendor `aconfig_flags.pb`
+  blob rejected by AOSP17 aconfig — removed from
+  `device/xiaomi/miro/proprietary-files.txt` and `vendor/xiaomi/miro/miro-vendor.mk`;
+  (6) 6 corrupt camera tuning XML declarations (`<?xml=version=`) fixed in
+  `vendor/xiaomi/miro/proprietary/odm/etc/camera/`; (7) stock ODM
+  `odm/etc/vintf/manifest/AHBF-V3-service.xml` conflicts with the source fingerprint HAL —
+  removed from the list, `miro-vendor.mk`, and the blob; (8) 28 new OS3 device HALs added to
+  `device/xiaomi/sm8750-common/configs/vintf/compatibility_matrix.xiaomi.xml` so the OTA VINTF
+  compatibility check passes; (9) 7 vendor `.so` DT_SONAMEs patched to their filenames
+  (`libtouchreport_alg_2` et al), with `blob_fixup().fix_soname()` added to
+  `device/xiaomi/miro/extract-files.py`; (10) vendor prebuilt ELF checks disabled
+  (`check_elf=False` in both `extract-files.py`, `check_elf_files: false` on the generated
+  prebuilt modules) after A16 blobs failed on `AHardwareBuffer_*@LIBNATIVEWINDOW` unresolved
+  symbols. See `HANDOFF.md` for details and the pre-scan snippets (`xmllint`, duplicate-HAL
+  python, SONAME scan).
 - **Build host:** `/mnt/games/evo`, `out/` on the same fs, `USE_CCACHE=0`, `m -j6`.
-  `/mnt/games/miro-work` (the 22 GB OS3 dump) was deleted to free space for `out/`; re-dump
-  from `/home/sulthonuladib/stock-roms/` if the vendor trees need regenerating again.
-- **Next action:** watch `build-evolution2.log`; triage the first compile/link errors (edit the
-  device tree, regenerate only if a list/extract-files change is needed, re-run `m evolution`).
-  When `out/target/product/miro/EvolutionX-*.zip` exists, move to Phase 5 (flash/boot).
+  `/mnt/games/miro-work` (the OS3 dump) is already deleted; re-dump from
+  `/home/sulthonuladib/stock-roms/` if the vendor trees need regenerating again. `out/` is
+  ~80 GB and `.repo/project-objects` was pruned to free space — **do not prune `.repo`
+  git metadata during a build again** (it breaks the build-manifest rule, Failure 4).
+- **Next action:** Phase 5 — flash `recovery.img`/`boot.img`/etc. from
+  `out/target/product/miro/` and sideload the EvolutionX zip on the real `miro`; then triage
+  boot (logcat/dmesg/avc). See `HANDOFF.md` → "Next commands — Phase 5".
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
