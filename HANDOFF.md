@@ -11,8 +11,16 @@ completion, triage compile/link errors, and produce
 
 ## Current state
 
-- **Build running:** `m -j6 evolution`, log `/mnt/games/evo/build-evolution2.log`
-  (~195k ninja steps). No compile errors yet. `/mnt/games` has ~88 GB free.
+- **Build running:** `m -j6 evolution`, log `/mnt/games/evo/build-evolution4.log`
+  (resumed at ~13:50 after the sepolicy fix below; earlier logs are
+  `build-evolution{,2,3}.log`). `/mnt/games` has ~37 GB free.
+- **First run failed at 55%** on `vendor_sepolicy.unversioned.cil`: `genfscon sysfs /class/qcom-battery`
+  was defined twice — `device/xiaomi/sm8750-common/sepolicy/vendor/genfs_contexts:5`
+  (`vendor_sysfs_qcom_battery`) and
+  `device/qcom/sepolicy_vndr/sm8750/generic/vendor/common/genfs_contexts:192`
+  (`vendor_sysfs_battery_supply`). The Xiaomi tree's `.te` rules use
+  `vendor_sysfs_qcom_battery`, so the **QTI line was commented out** (QTI repo patch, not
+  reproducible from the kit yet — fork or patch `device/qcom/sepolicy_vndr`).
 - **`m -j6 nothing` passes** (product config + Soong analysis + install rules + ninja load).
 - **Vendor trees regenerated** from the (now deleted) OS3 dump and committed:
   - kit `3d61904` (`device/xiaomi/miro`), nested common `0b106b2`
