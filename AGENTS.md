@@ -85,9 +85,8 @@ Dispatch to a specialist when a task matches its column; otherwise stay in the o
 
 ## Status
 
-Phases 0, 2 and 3 are complete. The Evolution X `cnb` build tree is at `/mnt/games/evo`
-(partial clone, `--git-lfs`); the first sync left 4 failed projects
-(`platform/system/unwinding`, `platform/external/perfmark`, `platform/external/python/cpython3`,
-`platform/external/skia`), so it needs one re-run. Next: finish the sync → signing keys →
-`lunch` → `m -j6 evolution`, then the real `check_elf` triage. Current phase and next action:
-see `PLAN.md` → "Current status".
+Phases 0–3 are complete and Phase 1 (source sync) is now complete too: the Evolution X `cnb`
+tree at `/mnt/games/evo` finished `repo sync` successfully (all four previously-failed
+projects recovered). Signing keys are generated in `vendor/evolution-priv/keys`. Active
+phase is **Phase 4**: `lunch lineage_miro-userdebug` → `USE_CCACHE=0 m -j6 evolution`, then
+the real `check_elf` triage. Current phase and next action: see `PLAN.md` → "Current status".

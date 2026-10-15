@@ -9,13 +9,29 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 
 ## Current status
 
-- **Active phase:** Phase 4 (first build) on a build host. Phase 3 (vendor trees) is complete.
-- **Done:** Phase 0 (research + kit), Phase 2 (stock ROM extraction + kernel artifacts) and
-  Phase 3 (vendor trees generated from OS3.0.302.0 on 2026-10-14).
-- **Next action:** Phase 1/4 — on the build host, `repo sync` (the `sulthonuladib` repos are
-  published on `cnb`; install `git-lfs` for the three LFS objects in
-  `proprietary_vendor_xiaomi_miro`), then `lunch`/`m evolution`. The first real `check_elf`
-  triage happens there (see Phase 3 notes).
+- **Active phase:** Phase 4 (first build). Phases 0–3 are done and **Phase 1 (source sync) is
+  complete** — the `cnb` tree at `/mnt/games/evo` is fully synced (`repo-sync2.log` ends with
+  "repo sync has finished successfully"; the four previously-failed projects
+  `platform/system/unwinding`, `platform/external/perfmark`, `platform/external/python/cpython3`,
+  `platform/external/skia` are all checked out).
+- **Phase 4 prep done (2026-10-15):**
+  - Signing keys generated at `vendor/evolution-priv/keys` via the template's `keys.sh`
+    (clone `Evolution-X/vendor_evolution-priv_keys-template`); ~179 key files incl.
+    `avb_custom_key.bin`. `vendor/lineage/config/evolution.mk` picks them up; for
+    `EVO_BUILD_TYPE=Unofficial` it is an optional `-include`.
+  - Host has `gpg 2.4.9`, `gperf`, `schedtool` (the `gnupg` meta package is *not* installed and
+    `sudo` needs a password, but `gpg` is present so the build is fine).
+  - Disk freed to ~103 GB on `/mnt/games` (`miro-work` removed; stock ROMs moved to
+    `/home/sulthonuladib/stock-roms/`). **`.repo` (~78 GB) is kept** so `repo` still works;
+    prune it only if `out/` drives `/mnt/games` below ~15 GB free.
+  - Lunch target: `lineage_miro-userdebug` → `EvolutionX-17.0-20261015-miro-12.3-Unofficial`
+    (`PLATFORM_VERSION=17`, `TARGET_DEVICE=miro`, `WITH_GMS=true`).
+- **Next action:** `. build/envsetup.sh && lunch lineage_miro-userdebug &&`
+  `USE_CCACHE=0 m -j6 evolution`, launched in the background with output at
+  `/mnt/games/evo/build.log`. First triage point is the first Soong/ninja error block
+  (typically `check_elf` "cannot find lib…"); fixes go in
+  `device/xiaomi/miro/extract-files.py` (`blob_fixups`) or `proprietary-files.txt`, then
+  regenerate with `./setup-makefiles.py` (see Phase 3).
 - **Phase 2 results (OS3.0.302.0.WOMIDXM, 2026-10-14):**
   - Kernel: **`6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k`** (the OS2.0.107.0 dump's
     6.6.30 is stale); `MIRO_KERNEL_VERSION` updated; artifacts populated in
@@ -70,7 +86,15 @@ read `AGENTS.md` first, then the "Current status" block below, then jump to the 
 **Acceptance:** a new session can read `AGENTS.md` + `PLAN.md` and know the target, the base
 trees, and the next action. ✅
 
-## Phase 1 — Environment & source sync ⬜⛔
+## Phase 1 — Environment & source sync 🟡
+
+**In progress on this machine:** `repo` 2.65 installed to `~/.local/bin`; tree initialized at
+`/mnt/games/evo` with `repo init -u https://github.com/Evolution-X/manifest -b cnb
+--partial-clone --clone-filter=blob:limit=10M --git-lfs`; `manifest/miro.xml` copied to
+`.repo/local_manifests/`. First sync left 4 projects to finish. `git-lfs` 3.8.0 in `~/.local/bin`.
+
+**Remaining inputs:** signing keys (`vendor/evolution-priv/keys`); host packages
+`gnupg gperf schedtool`.
 
 **Inputs:** build host; GitHub org.
 

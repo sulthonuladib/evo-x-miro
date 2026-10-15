@@ -1,40 +1,36 @@
 # HANDOFF — Evolution X `cnb` on `miro`
 
-> **Session handoff.** Written 2026-10-15 at the end of the vendor-tree + source-sync
-> session. Read this first, then `PLAN.md` → "Current status". Delete/refresh it once its
-> contents are folded into `PLAN.md`.
+> **Session handoff.** Written 2026-10-15 immediately before launching the first
+> `m evolution` build. Read this first, then `PLAN.md` → "Current status".
+> Delete/refresh once its contents are folded into `PLAN.md`.
 
 ## Goal right now
 
-Get to a **first `m evolution` build** of Evolution X (Android 17 / `cnb`) for POCO F7 Ultra
-(`miro`) on this machine, and triage the first `check_elf` / missing-module errors.
+Get the **first `m -j6 evolution` build** of Evolution X (Android 17 / `cnb`) for POCO F7 Ultra
+(`miro`) on this machine to succeed, then triage the first `check_elf` / missing-module errors.
 
-Phases 0 (research/kit), 2 (stock ROM → kernel artifacts) and 3 (vendor trees) are **done**.
-Phase 1 (source sync) is **finishing**; Phase 4 (first build) is next.
+Phases 0–3 are **done**. Phase 1 (source sync) is **complete**. Phase 4 (first build) is
+**in progress**.
 
 ## Current state
 
-- **Kit repo:** `~/personal/evo-x-miro` @ `main`, latest commit `88551b1`.
-- **Build tree:** `/mnt/games/evo` — `repo init -u https://github.com/Evolution-X/manifest
-  -b cnb --partial-clone --clone-filter=blob:limit=10M --git-lfs`, with
-  `manifest/miro.xml` copied to `.repo/local_manifests/`.
-- **A `repo sync` re-run is in progress** (started to recover 4 projects the first pass
-  missed). Log: `/mnt/games/evo/repo-sync2.log`. Check it finished with:
-  ```bash
-  pgrep -af '[m]ain.py.*sync' || echo SYNC_DONE
-  ```
-  The first pass reported errors in `platform/system/unwinding`,
-  `platform/external/perfmark`, `platform/external/python/cpython3`,
-  `platform/external/skia` (transient network). `repo sync` again is the fix.
-- **Published repos** (`github.com/sulthonuladib`, public, branch `cnb`):
-  `android_device_xiaomi_miro`, `android_device_xiaomi_miro-kernel`,
-  `proprietary_vendor_xiaomi_miro` (3 camera blobs in **Git LFS**),
-  `proprietary_vendor_xiaomi_sm8750-common`.
-- **Tools installed on this host:** `repo` 2.65 and `git-lfs` 3.8.0 in `~/.local/bin`;
-  `fsck.erofs` in `~/.local/opt/erofs/usr/bin`.
-- **Missing host packages:** `gnupg`, `gperf`, `schedtool`.
-- **Disk:** `/mnt/games` 229 G used, **79 G free**; `/` 61 G free. Source ≈185 G
-  (`.repo` ≈78 G + worktree ≈107 G). `out/` needs ~100–150 G, so free space first.
+- **Kit repo:** `~/personal/evo-x-miro` @ `main`, latest commit `ad70c1b`.
+- **Build tree:** `/mnt/games/evo`, branch `cnb`, fully synced.
+  `repo-sync2.log` ends with **"repo sync has finished successfully."** All four
+  previously-failed projects (`platform/system/unwinding`, `platform/external/perfmark`,
+  `platform/external/python/cpython3`, `platform/external/skia`) are checked out.
+- **Signing keys:** `vendor/evolution-priv/keys` generated via the template's `keys.sh`
+  (~179 files incl. `avb_custom_key.bin`, `releasekey.pk8 -> testkey.pk8`).
+  `vendor/lineage/config/evolution.mk` includes `keys.mk` (optional `-include` for Unofficial).
+  **Not backed up off-machine yet.**
+- **Host tools:** `repo` 2.65 + `git-lfs` 3.8.0 in `~/.local/bin`; `fsck.erofs` in
+  `~/.local/opt/erofs/usr/bin`; `gpg` 2.4.9, `gperf`, `schedtool`, `avbtool`, `openssl` present.
+  `gnupg` meta package not installed (`sudo` needs a password) — harmless.
+- **Disk:** `/mnt/games` ~103 GB free; `/` ~44 GB free. `.repo` ~78 GB still present.
+  `out/` has not been created yet.
+- **Lunch:** `lineage_miro-userdebug` →
+  `EvolutionX-17.0-20261015-miro-12.3-Unofficial`, `PLATFORM_VERSION=17`,
+  `TARGET_DEVICE=miro`, `WITH_GMS=true`.
 
 ## Next commands (in order)
 
@@ -42,32 +38,21 @@ Phase 1 (source sync) is **finishing**; Phase 4 (first build) is next.
 export PATH="$HOME/.local/bin:$PATH"
 cd /mnt/games/evo
 
-# 1) finish the sync; confirm SYNC_DONE
-repo sync -c -j8 --force-sync --no-clone-bundle --no-tags
-pgrep -af '[m]ain.py.*sync' || echo SYNC_DONE
-
-# 2) free disk BEFORE building
-mv /mnt/games/miro-files/*.tgz /path/to/external/   # 9.2 G, re-downloadable (optional)
-rm -rf /mnt/games/miro-work                          # 14 G, regenerable
-# last resort once the sync is green (breaks `repo` until re-init, frees ~78 G):
-# rm -rf /mnt/games/evo/.repo
-
-# 3) host packages
-sudo pacman -S --needed gnupg gperf schedtool
-
-# 4) signing keys (then back them up off-machine)
-git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template \
-    vendor/evolution-priv/keys
-cd vendor/evolution-priv/keys && ./keys.sh && cd /mnt/games/evo
-
-# 5) build
+# 1) build (background; log to build.log)
 . build/envsetup.sh
-lunch                     # choose lineage_miro-<release>-userdebug
-USE_CCACHE=0 m -j6 evolution
+lunch lineage_miro-userdebug
+USE_CCACHE=0 m -j6 evolution > build.log 2>&1 &
+echo $! > build.pid
+
+# 2) watch
+tail -f build.log
+df -h /mnt/games          # if free < ~15 GB, stop and: rm -rf /mnt/games/evo/.repo
+
+# 3) on success
+ls -la out/target/product/miro/
 ```
 
-`out/` defaults to `/mnt/games/evo/out` (same fs as the source). Watch
-`df -h /mnt/games`; if it fills, stop and tell the next session.
+If the build is not already running when you re-read this, just run step 1.
 
 ## What to hand back to the agent
 
@@ -81,7 +66,7 @@ USE_CCACHE=0 m -j6 evolution
 
 ## Open decisions
 
-1. **Licensing** — the four new repos are **public** and
+1. **Licensing** — the four `sulthonuladib` repos are **public** and
    `proprietary_vendor_xiaomi_miro` hosts Dolby/Leica/ArcSoft blobs. Make them private
    (then `repo sync` needs auth) or strip the restricted blobs.
 2. **Common-tree fork** — `Crisp-los/android_device_xiaomi_sm8750-common` still lists 11
@@ -91,6 +76,9 @@ USE_CCACHE=0 m -j6 evolution
 3. **`check_elf`** — the real triage needs the build; static analysis flagged 267
    `DT_NEEDED` names (mostly source-built AOSP/QTI interfaces) plus a few miro-owned
    version mismatches. See `PLAN.md` Phase 3.
+4. **`.repo` prune** — deleting `/mnt/games/evo/.repo` frees ~78 GB but breaks `repo` until
+   re-init (no re-download of worktree needed; re-init + sync is a full re-fetch). Do it only
+   if `out/` runs the disk low.
 
 ## Key paths
 
@@ -98,15 +86,14 @@ USE_CCACHE=0 m -j6 evolution
 | --- | --- |
 | Kit | `~/personal/evo-x-miro` |
 | Build tree | `/mnt/games/evo` (`out/` same fs) |
-| Stock ROM zips | `/mnt/games/miro-files/` (`OS3.0.302.0.WOMIDXM`) |
-| Dumped images | `/mnt/games/miro-work/images/` |
+| Build log | `/mnt/games/evo/build.log` |
+| Stock ROMs (moved) | `/home/sulthonuladib/stock-roms/` (`OS3.0.302.0.WOMIDXM`) |
+| Signing keys | `/mnt/games/evo/vendor/evolution-priv/keys` |
 | extract-utils (gitignored) | `~/personal/evo-x-miro/tools/extract-utils` |
-| prebuilt tool shims (gitignored) | `~/personal/evo-x-miro/prebuilts/` |
 | Published repos | `github.com/sulthonuladib/*` @ `cnb` |
 
 ## Relevant commits (kit)
 
+- `ad70c1b` — durable session handoff for Phase 1 → Phase 4.
 - `88551b1` — context-window/handoff convention; build-tree state.
-- `87c59a1` — manifest XML fix (`--` inside a comment).
 - `2acad2b` — Phase 3: vendor trees.
-- `e512c30` — build runbook prerequisites + super-size fix.
