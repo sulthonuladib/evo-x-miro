@@ -2047,7 +2047,6 @@ vendor/etc/hal_uuid_map_haotian.xml
 vendor/etc/hal_uuid_map_miro.xml
 vendor/etc/hal_uuid_map_xuanyuan.xml
 vendor/etc/input-port-associations.xml
-vendor/etc/linker.config.pb
 vendor/etc/mkshrc
 vendor/etc/nfcon.pnscr
 vendor/etc/qlm_config.xml
