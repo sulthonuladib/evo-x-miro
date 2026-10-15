@@ -18,8 +18,9 @@
 -->
 <manifest>
 
-  <!-- Upstream A17 SM8750 Xiaomi common tree (AIDL fingerprint HAL, UDFPS,
-       sensors, VINTF, sepolicy, overlays). It already carries a miro code path. -->
+  <!-- Upstream A17 SM8750 Xiaomi common tree now forked to sulthonuladib so
+       the miro OS3 vendor-list fixes and boot-jar ordering can be carried.
+       See HANDOFF.md and the `cnb` branch of the fork. -->
   <remote name="crisplos" fetch="https://github.com/Crisp-los" revision="cnb" />
 
   <!-- Trees hosted by you. -->
@@ -28,8 +29,8 @@
   <!-- Upstream hardware interfaces. -->
   <remote name="los" fetch="https://github.com/LineageOS" revision="lineage-24.0" />
 
-  <!-- Platform -->
-  <project path="device/xiaomi/sm8750-common" name="android_device_xiaomi_sm8750-common" remote="crisplos" />
+  <!-- Platform: forked Crisp-los tree with the miro fixes. -->
+  <project path="device/xiaomi/sm8750-common" name="android_device_xiaomi_sm8750-common" remote="miro" />
 
   <!-- Device -->
   <project path="device/xiaomi/miro"        name="android_device_xiaomi_miro"        remote="miro" />

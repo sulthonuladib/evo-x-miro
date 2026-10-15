@@ -74,10 +74,15 @@ sepolicy one.
 Everything below is a local working-tree edit, not upstream/committed anywhere the sync
 restores:
 1. `device/qcom/sepolicy_vndr/sm8750/generic/vendor/common/genfs_contexts` (failure 1).
-2. `device/xiaomi/sm8750-common` common-tree changes are in the kit's gitignored nested
-   clone only — **fork `Crisp-los/android_device_xiaomi_sm8750-common` `cnb` and push**
-   `proprietary-files.txt`, `extract-files.py`, `common.mk`.
+2. **Done:** `device/xiaomi/sm8750-common` is forked to
+   `sulthonuladib/android_device_xiaomi_sm8750-common` (`cnb` = `5219eb6`) and
+   `manifest/miro.xml` now points that project at the fork.
 3. The QTI `dataipa` header fix (failure 3), once chosen.
+
+Pushed/committed 2026-10-15: kit `d78c370` (+manifest), `device/xiaomi/miro`
+`sulthonuladib/android_device_xiaomi_miro` `cnb` `1a9ce4e`, vendor
+`vendor/xiaomi/{miro,sm8750-common}` `cnb` (`3b22413`/`4d24ec0`), common fork
+`5219eb6`.
 
 ## Next commands
 
