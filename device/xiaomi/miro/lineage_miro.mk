@@ -30,3 +30,11 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     SystemName=miro_global
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
+
+# Xiaomi/QTI boot classpath jars. Appended last (after the AOSP base products
+# are inherited below) so the ART boot image is generated with core-oj /
+# framework first; a boot jar ordered before its dependencies crashes dex2oat
+# with "Check failed: type_id != nullptr".
+PRODUCT_BOOT_JARS += \
+    telephony-ext \
+    xiaomi-telephony-stub
